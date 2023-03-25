@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <limits> 
 
 enum Category
 {
@@ -60,11 +61,32 @@ enum Category
 struct Mod
 {
 	int mNumber;
-	std::string mNane, mAuthor, mLink;
+	std::string mName, mAuthor, mLink;
 	Category mCategory;
 	std::vector<Mod> mDependencies;
 	bool isInstalled;
-	
 };
+
+#pragma region Functions
+void AddMod();
+void ShowMods();
+void FindMod();
+void RemoveMod();
+void EditMod();
+std::string ShowCategoryName(int category);
+void ShowAllCategories();
+std::string EnterString(std::string prompt);
+
+void SetModNumber(Mod m);
+void SetModName(Mod m);
+void SetModDependencies(Mod m);
+void SetModCategory(Mod m);
+void SetModAuthor(Mod m);
+void SetModLink(Mod m);
+void SetModInstallStatus(Mod m);
+
+void DisplayMod(Mod m);
+void DisplayAllMods();
+#pragma endregion
 
 std::vector<Mod> Mods;
