@@ -68,15 +68,14 @@ struct Mod
 };
 
 #pragma region Functions
+//Main Functions
 void AddMod();
-void ShowMods();
+void EditMod();
 void FindMod();
 void RemoveMod();
-void EditMod();
-std::string ShowCategoryName(int category);
-void ShowAllCategories();
-std::string EnterString(std::string prompt);
+void ShowMods();
 
+//Set Functions
 void SetModNumber(Mod m);
 void SetModName(Mod m);
 void SetModDependencies(Mod m);
@@ -85,8 +84,15 @@ void SetModAuthor(Mod m);
 void SetModLink(Mod m);
 void SetModInstallStatus(Mod m);
 
+//Display Functions
+std::string ShowCategoryName(int category);
+void ShowAllCategories();
 void DisplayMod(Mod m);
 void DisplayAllMods();
+
+//Helper Functions
+std::string EnterString(std::string prompt);
+void ClearCIN();
 #pragma endregion
 
 std::vector<Mod> Mods;

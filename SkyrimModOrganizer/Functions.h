@@ -6,14 +6,19 @@
 //Adds a mod to the Mods vector
 void AddMod()
 {
+	/*
+	To Do:
+		1. What happens when a mod is not on Nexus? (SKSE)
+	*/
 	Mod newMod;
 	SetModNumber(newMod);
+	SetModLink(newMod);
 	SetModName(newMod);
-	SetModDependencies(newMod);
+	//SetModDependencies(newMod);
 	SetModCategory(newMod);
 	SetModAuthor(newMod);
-	SetModLink(newMod);
-	SetModInstallStatus(newMod);
+	
+	//SetModInstallStatus(newMod);
 	DisplayMod(newMod);
 
 	Mods.push_back(newMod);
@@ -56,8 +61,7 @@ void SetModNumber(Mod m)
 	std::cin >> m.mNumber;
 	while (!std::cin.good() || m.mNumber < 0)
 	{
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		ClearCIN();
 		std::cout << "Invalid Entry. Enter Mod Number: ";
 		std::cin >> m.mNumber;
 	}
@@ -71,7 +75,6 @@ void SetModName(Mod m)
 		1. See if there is a way to make a string more compact to save space on a .txt file
 		2. Convert the string into all caps
 	*/
-
 	m.mName = EnterString("Enter Mod Name: ");
 	std::cout << "Mod Name: " << m.mName << '\n';
 }
@@ -123,8 +126,9 @@ void SetModLink(Mod m)
 	To Do:
 		1. See if there is a way to make a string more compact to save space on a .txt file
 	*/
-	m.mLink = EnterString("Enter Mod Link: ");
-	std::cout << "Mod Link: " << m.mLink << '\n';
+	//auto v = std::to_string(m.mNumber);
+	//m.mLink = "https://www.nexusmods.com/skyrimspecialedition/mods/" + v;
+	//std::cout << "Mod Link: " << m.mLink << '\n';
 }
 
 void SetModInstallStatus(Mod m)
@@ -283,16 +287,28 @@ void ShowAllCategories()
 #pragma region Helper Functions
 std::string EnterString(std::string prompt)
 {
+	ClearCIN();
 	std::string tempString;
-	//std::cout << "Type: ";
-	getline(std::cin, tempString);
+	std::cout << prompt;
 
-	while (tempString.empty())
+	while (getline(std::cin, tempString))
 	{
-		std::cout << prompt;
-		getline(std::cin, tempString);
+		if (tempString.size() > 0)
+		{
+			break;
+		}
+		std::cout << "Invalid Entry! " << prompt;
 	}
 	return tempString;
+}
+
+/// <summary>
+/// Calls the necessary to clear cin's error flag and goes to the next line to read
+/// </summary>
+void ClearCIN()
+{
+	std::cin.clear();
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 #pragma endregion
 
