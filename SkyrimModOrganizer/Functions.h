@@ -1,170 +1,87 @@
 #pragma once
 #include "Defines.h"
 
-
 #pragma region Main Functions
-//Adds a mod to the Mods vector
 void AddMod()
 {
-	/*
-	To Do:
-		1. What happens when a mod is not on Nexus? (SKSE)
-	*/
-	Mod newMod;
-	SetModNumber(newMod);
-	SetModLink(newMod);
-	SetModName(newMod);
-	//SetModDependencies(newMod);
-	SetModCategory(newMod);
-	SetModAuthor(newMod);
-	
-	//SetModInstallStatus(newMod);
-	DisplayMod(newMod);
-
-	Mods.push_back(newMod);
-}
-
-//Shows all mods in the Mods vector
-void ShowMods()
-{
-
-}
-
-//Finds a specific mod, if it exists
-void FindMod()
-{
-
-}
-
-//Removes a mod from the Mods vector
-void RemoveMod()
-{
-
-}
-
-//Edits a specific mod in the Mods vector
-void EditMod()
-{
-
+	//int mNumber = -1;
+	//SSECategory mCategory = NoCategory;
+	int mNumber = SetModNumber();
+	if (mNumber == -1)
+	{
+		std::cout << "This Mod Already Exists\n";
+	}
+	else
+	{
+		SSECategory mCategory = SetModCategory();
+		bool mInstalled = SetModInstalled();
+		CreateMod(mNumber, mCategory, mInstalled);
+	}
+	std::cout << "Number of Mods: " << ModList.size() << std::endl;
 }
 #pragma endregion
 
 #pragma region Set Functions
-void SetModNumber(Mod m)
+int SetModNumber()
 {
 	/*
 	To Do:
 		1. Check to see if the mod number (thus the mod) already exists. If it does, stop the function
 	*/
-
+	//ClearCIN();
+	int mNumber;
 	std::cout << "Enter Mod Number: ";
-	std::cin >> m.mNumber;
-	while (!std::cin.good() || m.mNumber < 0)
+	std::cin >> mNumber;
+	while (!std::cin.good() || mNumber < 0)
 	{
 		ClearCIN();
 		std::cout << "Invalid Entry. Enter Mod Number: ";
-		std::cin >> m.mNumber;
+		std::cin >> mNumber;
 	}
-	std::cout << "Mod Number: " << m.mNumber << '\n';
+	if (FindMod(mNumber) == -1) 
+	{
+		return mNumber;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
-void SetModName(Mod m)
+SSECategory SetModCategory()
 {
-	/*
-	To Do:
-		1. See if there is a way to make a string more compact to save space on a .txt file
-		2. Convert the string into all caps
-	*/
-	m.mName = EnterString("Enter Mod Name: ");
-	std::cout << "Mod Name: " << m.mName << '\n';
-}
 
-void SetModDependencies(Mod m)
-{
-	/*
-	To Do:
-		Ask the user to input the mod number. If the mod exists, put said mod into the dependencies vector.
-		If the mod does not exist, ask the user if they want to add this mod or skip it.
-	*/
-}
-
-void SetModCategory(Mod m)
-{
-	/*
-	To Do:
-	*/
-
-	int category;
+	int mCategory;
 	std::cout << "Here are the mod categories.\n";
-	ShowAllCategories();
-	std::cout << "Enter Mod Category : ";
-	std::cin >> category;
-	while (!std::cin.good() || category < 0 || category > 48)
+	DisplayAllCategories();
+	std::cout << "Enter Mod Category: ";
+	std::cin >> mCategory;
+	while (!std::cin.good() || mCategory < 0 || mCategory > 48)
 	{
-		std::cin.clear();
-		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		ClearCIN();
 		std::cout << "Invalid Entry. Enter Mod Category: ";
-		std::cin >> category;
+		std::cin >> mCategory;
 	}
-	m.mCategory = (Category)category;
+	return (SSECategory)mCategory;
 }
 
-void SetModAuthor(Mod m)
+bool SetModInstalled()
 {
-	/*
-	To Do:
-		1. See if there is a way to make a string more compact to save space on a .txt file
-		2. Convert the string into all caps
-	*/
-	m.mAuthor = EnterString("Enter Mod Author: ");
-	std::cout << "Mod Author: " << m.mAuthor << '\n';
-}
-
-void SetModLink(Mod m)
-{
-	/*
-	To Do:
-		1. See if there is a way to make a string more compact to save space on a .txt file
-	*/
-	//auto v = std::to_string(m.mNumber);
-	//m.mLink = "https://www.nexusmods.com/skyrimspecialedition/mods/" + v;
-	//std::cout << "Mod Link: " << m.mLink << '\n';
-}
-
-void SetModInstallStatus(Mod m)
-{
-	/*
-	To Do:
-		1. See if there is a better way to make this smoother.
-	*/
-	std::cout << "Is the mod installed? ";
-	std::cin >> m.isInstalled;
-	while (m.isInstalled != 0 && m.isInstalled != 1)
+	bool mInstalled;
+	std::cout << "Is the mod installed? (1 = Yes, 0 = No): ";
+	std::cin >> mInstalled;
+	while (!std::cin.good() || (mInstalled != 0 && mInstalled != 1))
 	{
-		std::cout << "Invalid Entry. Is the mod installed? ";
-		std::cin >> m.isInstalled;
+		ClearCIN();
+		std::cout << "Invalid Entry. Is the mod installed? (1 = Yes, 0 = No): ";
+		std::cin >> mInstalled;
 	}
+	return mInstalled;
 }
 #pragma endregion
 
 #pragma region Display Functions
-void DisplayMod(Mod m)
-{
-
-}
-
-void DisplayAllMods()
-{
-
-}
-
-/// <summary>
-/// Depending on the input of the function, the output will be the actual name of
-/// the mod category, rather than the enum value.
-/// </summary>
-/// <param name="category">Enum Value</param>
-/// <returns>Category Name</returns>
-std::string ShowCategoryName(int category)
+const char* DisplayCategoryName(int category)
 {
 	switch (category)
 	{
@@ -272,49 +189,64 @@ std::string ShowCategoryName(int category)
 	}
 }
 
-/// <summary>
-/// Displays the list of all possible mod categories.
-/// </summary>
-void ShowAllCategories()
+void DisplayAllCategories()
 {
 	for (int i = 0; i < 49; i++)
 	{
-		std::cout << i << ". " << ShowCategoryName(i) << '\n';
+		std::cout << i << ". " << DisplayCategoryName(i) << '\n';
+	}
+}
+
+void DisplayUserOptions()
+{
+	for (int i = 0; i < UserOptions.size(); i++)
+	{
+		std::cout << i + 1 << ": " << UserOptions[i] << std::endl;
+	}
+}
+
+void DisplayMod(SSEMod mod)
+{
+	
+	std::cout << "Mod Number: " << mod.mNumber << '\n' <<
+				 "Mod Category: " << DisplayCategoryName(mod.mCategory) << '\n' <<
+				 "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << std::endl;
+}
+
+const char* DisplayIsInstalled(bool mInstalled)
+{
+	if (mInstalled)
+	{
+		return "True";
+	}
+	else
+	{
+		return "False";
 	}
 }
 #pragma endregion
 
 #pragma region Helper Functions
-std::string EnterString(std::string prompt)
-{
-	ClearCIN();
-	std::string tempString;
-	std::cout << prompt;
-
-	while (getline(std::cin, tempString))
-	{
-		if (tempString.size() > 0)
-		{
-			break;
-		}
-		std::cout << "Invalid Entry! " << prompt;
-	}
-	return tempString;
-}
-
-/// <summary>
-/// Calls the necessary to clear cin's error flag and goes to the next line to read
-/// </summary>
 void ClearCIN()
 {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
+
+int FindMod(int mNumber)
+{
+	for (int i = 0; i < ModList.size(); i++)
+	{
+		if (ModList[i].mNumber == mNumber)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+void CreateMod(int mNumber, SSECategory mCategory, bool mInstalled)
+{
+	ModList.push_back(SSEMod{ mNumber, mCategory, mInstalled });
+}
 #pragma endregion
-
-
-
-
-
-
-

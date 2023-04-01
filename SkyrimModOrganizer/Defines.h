@@ -5,7 +5,10 @@
 #include <string>
 #include <limits> 
 
-enum Category
+/// <summary>
+/// 
+/// </summary>
+enum SSECategory
 {
 	NoCategory,
 	Alchemy,
@@ -58,41 +61,98 @@ enum Category
 	Weapons_Armour//Weapons and Armour
 };
 
-struct Mod
+/// <summary>
+/// 
+/// </summary>
+struct SSEMod
 {
 	int mNumber;
-	std::string mName, mAuthor, mLink;
-	Category mCategory;
-	std::vector<Mod> mDependencies;
-	bool isInstalled;
+	SSECategory mCategory;
+	bool mInstalled;
+	//mName, mAuthor, mLink;
+	//std::vector<SSEMod> mDependencies;
 };
 
-#pragma region Functions
-//Main Functions
+#pragma region Main Functions
 void AddMod();
 void EditMod();
-void FindMod();
 void RemoveMod();
-void ShowMods();
-
-//Set Functions
-void SetModNumber(Mod m);
-void SetModName(Mod m);
-void SetModDependencies(Mod m);
-void SetModCategory(Mod m);
-void SetModAuthor(Mod m);
-void SetModLink(Mod m);
-void SetModInstallStatus(Mod m);
-
-//Display Functions
-std::string ShowCategoryName(int category);
-void ShowAllCategories();
-void DisplayMod(Mod m);
 void DisplayAllMods();
-
-//Helper Functions
-std::string EnterString(std::string prompt);
-void ClearCIN();
 #pragma endregion
 
-std::vector<Mod> Mods;
+#pragma region Set Functions
+/// <summary>
+/// 
+/// </summary>
+/// <returns></returns>
+int SetModNumber();
+
+//void SetModName();
+//void SetModAuthor();
+
+/// <summary>
+/// 
+/// </summary>
+/// <returns></returns>
+SSECategory SetModCategory();
+//void SetModDependencies();
+
+/// <summary>
+/// 
+/// </summary>
+/// <returns></returns>
+bool SetModInstalled();
+//void SetModLink();
+#pragma endregion
+
+#pragma region Display Functions
+/// <summary>
+/// 
+/// </summary>
+/// <param name="category"></param>
+/// <returns></returns>
+const char* DisplayCategoryName(int category);
+
+/// <summary>
+/// 
+/// </summary>
+void DisplayAllCategories();
+
+/// <summary>
+/// 
+/// </summary>
+void DisplayUserOptions();
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="mod"></param>
+void DisplayMod(SSEMod mod);
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="mInstalled"></param>
+/// <returns></returns>
+const char* DisplayIsInstalled(bool mInstalled);
+#pragma endregion
+
+#pragma region Helper Functions
+/// <summary>
+/// Calls the necessary to clear cin's error flag and goes to the next line to read
+/// </summary>
+void ClearCIN();
+
+/// <summary>
+/// 
+/// </summary>
+/// <param name="mNumber"></param>
+/// <returns></returns>
+int FindMod(int mNumber);
+
+
+void CreateMod(int mNumber, SSECategory mCategory, bool mInstalled);
+#pragma endregion
+
+std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
+std::vector<SSEMod> ModList;

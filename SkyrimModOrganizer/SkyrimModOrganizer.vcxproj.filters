@@ -20,6 +20,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DefinesOLD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionsOLD.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Defines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
