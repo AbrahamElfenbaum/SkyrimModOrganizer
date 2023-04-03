@@ -75,8 +75,12 @@ struct SSEMod
 
 #pragma region Main Functions
 void AddMod();
-void EditMod();
-void RemoveMod();
+void EditMod(int mNumber);
+void RemoveMod(int mNumber);
+
+/// <summary>
+/// Calls the DisplayMod function on all of the mods in the ModList vector
+/// </summary>
 void DisplayAllMods();
 #pragma endregion
 
@@ -144,13 +148,20 @@ const char* DisplayIsInstalled(bool mInstalled);
 void ClearCIN();
 
 /// <summary>
-/// 
+/// Searches a vector of mods and, if mNumber is found, returns the location of the mod in the list
 /// </summary>
-/// <param name="mNumber"></param>
-/// <returns></returns>
-int FindMod(int mNumber);
+/// <param name="mList">The Mod List to search</param>
+/// <param name="mNumber">The Mod number to find</param>
+/// <returns>The location of the mod in the list, or -1 if the mod is not found</returns>
+int FindMod(std::vector<SSEMod> mList, int mNumber);
 
-
+/// <summary>
+/// Takes in all the parameters that maks up the SSEMod struct, creates a new instance of the struct,
+/// and adds it to the ModList vector
+/// </summary>
+/// <param name="mNumber">Mod's Number</param>
+/// <param name="mCategory"> Mod's Category</param>
+/// <param name="mInstalled">Mod's Install Status</param>
 void CreateMod(int mNumber, SSECategory mCategory, bool mInstalled);
 #pragma endregion
 

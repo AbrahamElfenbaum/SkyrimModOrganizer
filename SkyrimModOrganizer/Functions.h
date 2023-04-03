@@ -19,6 +19,33 @@ void AddMod()
 	}
 	std::cout << "Number of Mods: " << ModList.size() << std::endl;
 }
+
+void EditMod(int mNumber)
+{
+	if (FindMod(ModList, mNumber) == -1)
+	{
+		std::cout << "No Such Mod Exists\n";
+		return;
+	}
+}
+
+void RemoveMod(int mNumber)
+{
+	if (FindMod(ModList, mNumber) == -1)
+	{
+		std::cout << "No Such Mod Exists\n";
+		return;
+	}
+}
+
+void DisplayAllMods()
+{
+	for (auto m : ModList)
+	{
+		DisplayMod(m);
+		std::cout << std::endl;
+	}
+}
 #pragma endregion
 
 #pragma region Set Functions
@@ -38,7 +65,7 @@ int SetModNumber()
 		std::cout << "Invalid Entry. Enter Mod Number: ";
 		std::cin >> mNumber;
 	}
-	if (FindMod(mNumber) == -1) 
+	if (FindMod(ModList, mNumber) == -1) 
 	{
 		return mNumber;
 	}
@@ -233,11 +260,11 @@ void ClearCIN()
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-int FindMod(int mNumber)
+int FindMod(std::vector<SSEMod> mList, int mNumber)
 {
-	for (int i = 0; i < ModList.size(); i++)
+	for (int i = 0; i < mList.size(); i++)
 	{
-		if (ModList[i].mNumber == mNumber)
+		if (mList[i].mNumber == mNumber)
 		{
 			return i;
 		}
