@@ -1,16 +1,25 @@
 #include "Functions.h"
 int main()
 {
-	
-	bool loop = true;
-	int option = -1;
+	/*
+	// Enables memory leak detection
+	#define _CRTDBG_MAP_ALLOC
+	// Memory leak detection code
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	// This function call will set a breakpoint at the location of a leaked block
+	// Set the parameter to the identifier for a leaked block
+	_CrtSetBreakAlloc(-1);
+	*/
+
 	AddMod();
 	DisplayMod(ModList[0]);
-	
+	AddMod();
 #if 0
+	bool loop = true;
+	int option = -1;
 	while (loop)
 	{
-		DisplayUserOptions();
+		DisplayUserOptions(UserOptions);
 		std::cout << "Enter Choice: ";
 		std::cin >> option;
 		while (!std::cin.good() || option < 1 || option > 5)

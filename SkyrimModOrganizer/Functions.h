@@ -4,20 +4,17 @@
 #pragma region Main Functions
 void AddMod()
 {
-	//int mNumber = -1;
-	//SSECategory mCategory = NoCategory;
 	int mNumber = SetModNumber();
 	if (mNumber == -1)
 	{
 		std::cout << "This Mod Already Exists\n";
+		return;
 	}
-	else
-	{
-		SSECategory mCategory = SetModCategory();
-		bool mInstalled = SetModInstalled();
-		CreateMod(mNumber, mCategory, mInstalled);
-	}
-	std::cout << "Number of Mods: " << ModList.size() << std::endl;
+	//const char* mName = SetModNameAuthor("Enter Mod Name: ");
+	SSECategory mCategory = SetModCategory();
+	//const char* mAuthor = SetModNameAuthor("Enter Mod Author: ");
+	bool mInstalled = SetModInstalled();
+	ModList.push_back(CreateMod("mName", mNumber, "mAuthor", mCategory,  mInstalled));
 }
 
 void EditMod(int mNumber)
@@ -51,11 +48,6 @@ void DisplayAllMods()
 #pragma region Set Functions
 int SetModNumber()
 {
-	/*
-	To Do:
-		1. Check to see if the mod number (thus the mod) already exists. If it does, stop the function
-	*/
-	//ClearCIN();
 	int mNumber;
 	std::cout << "Enter Mod Number: ";
 	std::cin >> mNumber;
@@ -69,10 +61,7 @@ int SetModNumber()
 	{
 		return mNumber;
 	}
-	else
-	{
-		return -1;
-	}
+	return -1;
 }
 
 SSECategory SetModCategory()
@@ -104,6 +93,20 @@ bool SetModInstalled()
 		std::cin >> mInstalled;
 	}
 	return mInstalled;
+}
+
+char* SetModNameAuthor(const char* prompt)
+{
+	ClearCIN();
+	char temp[BUFFER_SIZE];
+	std::cout << prompt;
+	std::cin.getline(temp, BUFFER_SIZE);
+	while (temp[0] == NULL)
+	{
+		std::cout << "Invalid Entry. " << prompt;
+		std::cin.getline(temp, BUFFER_SIZE);
+	}
+	return temp;
 }
 #pragma endregion
 
@@ -224,20 +227,22 @@ void DisplayAllCategories()
 	}
 }
 
-void DisplayUserOptions()
+void DisplayUserOptions(std::vector<const char*> options)
 {
-	for (int i = 0; i < UserOptions.size(); i++)
+	for (int i = 0; i < options.size(); i++)
 	{
-		std::cout << i + 1 << ": " << UserOptions[i] << std::endl;
+		std::cout << i + 1 << ": " << options[i] << std::endl;
 	}
 }
 
 void DisplayMod(SSEMod mod)
 {
-	
-	std::cout << "Mod Number: " << mod.mNumber << '\n' <<
+
+	std::cout << "Mod Name: " << mod.mName << '\n' <<
+				 "Mod Number: " << mod.mNumber << '\n' <<
+				 "Mod Author: " << mod.mAuthor << '\n' <<
 				 "Mod Category: " << DisplayCategoryName(mod.mCategory) << '\n' <<
-				 "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << std::endl;
+				 "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << '\n';
 }
 
 const char* DisplayIsInstalled(bool mInstalled)
@@ -272,8 +277,9 @@ int FindMod(std::vector<SSEMod> mList, int mNumber)
 	return -1;
 }
 
-void CreateMod(int mNumber, SSECategory mCategory, bool mInstalled)
+SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory,  bool mInstalled)
 {
-	ModList.push_back(SSEMod{ mNumber, mCategory, mInstalled });
+	return SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, "No Link"};
 }
 #pragma endregion
+

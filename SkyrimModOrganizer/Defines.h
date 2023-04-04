@@ -5,9 +5,9 @@
 #include <string>
 #include <limits> 
 
-/// <summary>
-/// 
-/// </summary>
+#include <iomanip>
+
+#define NEXUSLINK "https://www.nexusmods.com/skyrimspecialedition/mods/"
 enum SSECategory
 {
 	NoCategory,
@@ -61,109 +61,48 @@ enum SSECategory
 	Weapons_Armour//Weapons and Armour
 };
 
-/// <summary>
-/// 
-/// </summary>
 struct SSEMod
 {
+	const char* mName;
 	int mNumber;
+	const char* mAuthor;
 	SSECategory mCategory;
-	bool mInstalled;
-	//mName, mAuthor, mLink;
 	//std::vector<SSEMod> mDependencies;
+	bool mInstalled;
+	const char* mLink;
+	
 };
+
+const size_t BUFFER_SIZE = 1024;
+std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
+std::vector<SSEMod> ModList;
 
 #pragma region Main Functions
 void AddMod();
 void EditMod(int mNumber);
 void RemoveMod(int mNumber);
-
-/// <summary>
-/// Calls the DisplayMod function on all of the mods in the ModList vector
-/// </summary>
 void DisplayAllMods();
 #pragma endregion
 
 #pragma region Set Functions
-/// <summary>
-/// 
-/// </summary>
-/// <returns></returns>
 int SetModNumber();
-
-//void SetModName();
-//void SetModAuthor();
-
-/// <summary>
-/// 
-/// </summary>
-/// <returns></returns>
+char* SetModNameAuthor(const char* prompt);
 SSECategory SetModCategory();
 //void SetModDependencies();
-
-/// <summary>
-/// 
-/// </summary>
-/// <returns></returns>
 bool SetModInstalled();
-//void SetModLink();
 #pragma endregion
 
 #pragma region Display Functions
-/// <summary>
-/// 
-/// </summary>
-/// <param name="category"></param>
-/// <returns></returns>
 const char* DisplayCategoryName(int category);
-
-/// <summary>
-/// 
-/// </summary>
 void DisplayAllCategories();
-
-/// <summary>
-/// 
-/// </summary>
-void DisplayUserOptions();
-
-/// <summary>
-/// 
-/// </summary>
-/// <param name="mod"></param>
+void DisplayUserOptions(std::vector<const char*> options);
 void DisplayMod(SSEMod mod);
-
-/// <summary>
-/// 
-/// </summary>
-/// <param name="mInstalled"></param>
-/// <returns></returns>
 const char* DisplayIsInstalled(bool mInstalled);
 #pragma endregion
 
 #pragma region Helper Functions
-/// <summary>
-/// Calls the necessary to clear cin's error flag and goes to the next line to read
-/// </summary>
 void ClearCIN();
-
-/// <summary>
-/// Searches a vector of mods and, if mNumber is found, returns the location of the mod in the list
-/// </summary>
-/// <param name="mList">The Mod List to search</param>
-/// <param name="mNumber">The Mod number to find</param>
-/// <returns>The location of the mod in the list, or -1 if the mod is not found</returns>
 int FindMod(std::vector<SSEMod> mList, int mNumber);
-
-/// <summary>
-/// Takes in all the parameters that maks up the SSEMod struct, creates a new instance of the struct,
-/// and adds it to the ModList vector
-/// </summary>
-/// <param name="mNumber">Mod's Number</param>
-/// <param name="mCategory"> Mod's Category</param>
-/// <param name="mInstalled">Mod's Install Status</param>
-void CreateMod(int mNumber, SSECategory mCategory, bool mInstalled);
+SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory, bool mInstalled);
 #pragma endregion
 
-std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
-std::vector<SSEMod> ModList;
