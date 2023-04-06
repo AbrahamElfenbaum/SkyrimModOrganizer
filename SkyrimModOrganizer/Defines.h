@@ -85,10 +85,27 @@ void DisplayAllMods();
 #pragma endregion
 
 #pragma region Set Functions
+/// <summary>
+/// Prompts the user to input the Mod's number. It will return the submitted
+/// number if no mod in ModList already has that number, and will return -1
+/// if there already is a mod with that number
+/// </summary>
+/// <returns>The Mod's number or -1 if a mod with that number already exists</returns>
 int SetModNumber();
+
 char* SetModNameAuthor(const char* prompt);
+
+/// <summary>
+/// Prompts the user to enter in a Mod's category
+/// </summary>
+/// <returns>The Enum value of the submitted category</returns>
 SSECategory SetModCategory();
 //void SetModDependencies();
+
+/// <summary>
+/// Prompts the user to input whether or not a mod is installed or not
+/// </summary>
+/// <returns>True if the mod is installed, false otherwise</returns>
 bool SetModInstalled();
 #pragma endregion
 
@@ -102,7 +119,15 @@ const char* DisplayIsInstalled(bool mInstalled);
 
 #pragma region Helper Functions
 void ClearCIN();
+
+/// <summary>
+/// Determines if a mod is in a SSEMod vector by the number put into the function
+/// </summary>
+/// <param name="mList">The vector to be searched</param>
+/// <param name="mNumber">The mod number that is to be found</param>
+/// <returns>The vector location of the mod if it is found, and -1 if it is not found</returns>
 int FindMod(std::vector<SSEMod> mList, int mNumber);
-SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory, bool mInstalled);
+SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory, bool mInstalled, const char* mLink);
+void AddDependencyMod(std::vector<SSEMod> mDependencies);
 #pragma endregion
 

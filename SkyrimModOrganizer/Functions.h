@@ -4,6 +4,7 @@
 #pragma region Main Functions
 void AddMod()
 {
+
 	int mNumber = SetModNumber();
 	if (mNumber == -1)
 	{
@@ -14,7 +15,7 @@ void AddMod()
 	SSECategory mCategory = SetModCategory();
 	//const char* mAuthor = SetModNameAuthor("Enter Mod Author: ");
 	bool mInstalled = SetModInstalled();
-	ModList.push_back(CreateMod("mName", mNumber, "mAuthor", mCategory,  mInstalled));
+	ModList.push_back(CreateMod("mName", mNumber, "mAuthor", mCategory,  mInstalled, "mLink"));
 }
 
 void EditMod(int mNumber)
@@ -59,8 +60,10 @@ int SetModNumber()
 	}
 	if (FindMod(ModList, mNumber) == -1) 
 	{
+		//Mod Doesn't Exist
 		return mNumber;
 	}
+	//Mod Exists
 	return -1;
 }
 
@@ -271,15 +274,41 @@ int FindMod(std::vector<SSEMod> mList, int mNumber)
 	{
 		if (mList[i].mNumber == mNumber)
 		{
+			//Mod Exists
 			return i;
 		}
 	}
+	//Mod Doesn't Exits
 	return -1;
 }
 
-SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory,  bool mInstalled)
+void AddDependencyMod(std::vector<SSEMod> mDependencies)
 {
-	return SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, "No Link"};
+	int mNumber;
+	std::cout << "Enter Mod Number: ";
+	std::cin >> mNumber;
+	while (!std::cin.good() || mNumber < 0)
+	{
+		ClearCIN();
+		std::cout << "Invalid Entry. Enter Mod Number: ";
+		std::cin >> mNumber;
+	}
+	if (FindMod(ModList, mNumber) > -1)//The mod already exists in ModList
+	{
+		mDependencies.push_back(ModList[FindMod(ModList, mNumber)]);
+		return;
+	}
+	//const char* mName = SetModNameAuthor("Enter Mod Name: ");
+	SSECategory mCategory = SetModCategory();
+	//const char* mAuthor = SetModNameAuthor("Enter Mod Author: ");
+	bool mInstalled = SetModInstalled();
+	mDependencies.push_back(CreateMod("mName", mNumber, "mAuthor", mCategory, mInstalled, "mLink"));
+
+}
+
+SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory,  bool mInstalled, const char* mLink)
+{
+	return SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink };
 }
 #pragma endregion
 
