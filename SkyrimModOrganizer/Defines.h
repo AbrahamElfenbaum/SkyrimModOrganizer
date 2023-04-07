@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <limits> 
-
+#include <cstring>
 #include <iomanip>
 
 #define NEXUSLINK "https://www.nexusmods.com/skyrimspecialedition/mods/"
@@ -128,6 +128,7 @@ void ClearCIN();
 /// <returns>The vector location of the mod if it is found, and -1 if it is not found</returns>
 int FindMod(std::vector<SSEMod> mList, int mNumber);
 SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory, bool mInstalled, const char* mLink);
-void AddDependencyMod(std::vector<SSEMod> mDependencies);
+void AddDependencyMod(std::vector<SSEMod> &mDependencies);
+std::string CreateModLink(int mNumber);
 #pragma endregion
 

@@ -11,11 +11,14 @@ void AddMod()
 		std::cout << "This Mod Already Exists\n";
 		return;
 	}
+	std::string mLink_s = CreateModLink(mNumber);
+	const char* mLink = mLink_s.c_str();
 	//const char* mName = SetModNameAuthor("Enter Mod Name: ");
 	SSECategory mCategory = SetModCategory();
 	//const char* mAuthor = SetModNameAuthor("Enter Mod Author: ");
 	bool mInstalled = SetModInstalled();
-	ModList.push_back(CreateMod("mName", mNumber, "mAuthor", mCategory,  mInstalled, "mLink"));
+	ModList.push_back(CreateMod("mName", mNumber, "mAuthor", mCategory,  mInstalled, mLink));
+	
 }
 
 void EditMod(int mNumber)
@@ -282,7 +285,7 @@ int FindMod(std::vector<SSEMod> mList, int mNumber)
 	return -1;
 }
 
-void AddDependencyMod(std::vector<SSEMod> mDependencies)
+void AddDependencyMod(std::vector<SSEMod> &mDependencies)
 {
 	int mNumber;
 	std::cout << "Enter Mod Number: ";
@@ -306,6 +309,19 @@ void AddDependencyMod(std::vector<SSEMod> mDependencies)
 
 }
 
+std::string CreateModLink(int mNumber) 
+{
+	std::string numString = std::to_string(mNumber);
+	const char* path = numString.c_str();
+	const char* baseURL = "https://www.nexusmods.com/skyrimspecialedition/mods/";
+	int len = 52 + strlen(path) + 1;
+	char* result = new char[len];
+	strcpy_s(result, len, baseURL);
+	strcat_s(result, len, path);
+	std::string url(result);
+	delete[] result;
+	return url;
+}
 SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory,  bool mInstalled, const char* mLink)
 {
 	return SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink };

@@ -11,9 +11,9 @@ int main()
 	_CrtSetBreakAlloc(-1);
 	*/
 
-	AddMod();
-	DisplayMod(ModList[0]);
-	AddMod();
+	const char* path = "12345";
+	std::string url = combineURL(12345);
+	std::cout << "Combined URL: " << url << std::endl;
 #if 0
 	bool loop = true;
 	int option = -1;
