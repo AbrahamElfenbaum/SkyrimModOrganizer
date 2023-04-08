@@ -71,7 +71,6 @@ struct SSEMod
 	std::vector<SSEMod> mDependencies;
 };
 
-const size_t BUFFER_SIZE = 1024;
 std::vector<SSEMod> ModList;
 std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
 
@@ -93,6 +92,7 @@ int                 SetModNumber();
 #pragma region Display Functions
 void        DisplayAllCategories();
 const char* DisplayCategoryName(int category);
+void		DisplayDependencies(std::vector<SSEMod> mDependencies);
 const char* DisplayIsInstalled(bool mInstalled);
 void        DisplayMod(SSEMod mod);
 void        DisplayUserOptions(std::vector<const char*> options);

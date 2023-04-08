@@ -1,16 +1,15 @@
 #include "Functions.h"
 int main()
 {
-	/*
-	// Enables memory leak detection
-	#define _CRTDBG_MAP_ALLOC
-	// Memory leak detection code
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	// This function call will set a breakpoint at the location of a leaked block
-	// Set the parameter to the identifier for a leaked block
-	_CrtSetBreakAlloc(-1);
-	*/
-	AddMod();
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//												     TO DO:                                                      //
+	// 1. Complete the Add, Edit and Remove Mod functions, and any helper functions needed for them to work correctly// 
+	// 2. See if I can find a way to change all of the strings in the SSEMod struct into const char*				 //
+	// 2. See if I can find a way to encode the names, authors and links into smaller codes and back again			 //
+	// 3. Find blocks of repeated code and see if they can be made into functions to avoid duplication				 //
+	// 4. Look to see if there are other ways to make the code more efficient/elegant								 //
+	// 5. Make a proper UI for the code																				 //
+	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #if 0
 	bool loop = true;
 	int option = -1;

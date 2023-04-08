@@ -292,6 +292,15 @@ const char* DisplayCategoryName(int category)
 		return "Default";
 	}
 }
+void		DisplayDependencies(std::vector<SSEMod> mDependencies)
+{
+	std::cout << "----------Dependencies----------\n";
+	for (auto d : mDependencies)
+	{
+		std::cout << d.mNumber << ": " << d.mName << std::endl;
+	}
+	std::cout << "--------------------------------\n";
+}
 const char* DisplayIsInstalled(bool mInstalled)
 {
 	if (mInstalled)
@@ -312,6 +321,7 @@ void        DisplayMod(SSEMod mod)
 		         "Mod Category: "       << DisplayCategoryName(mod.mCategory) << '\n' <<
 		         "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << '\n' <<
 				 "Mod Link: "           << mod.mLink                          << '\n';
+	DisplayDependencies(mod.mDependencies);
 }
 void        DisplayUserOptions(std::vector<const char*> options)
 {
