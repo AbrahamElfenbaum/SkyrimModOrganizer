@@ -7,7 +7,6 @@
 #include <cstring>
 #include <iomanip>
 
-#define NEXUSLINK "https://www.nexusmods.com/skyrimspecialedition/mods/"
 enum SSECategory
 {
 	NoCategory,
@@ -63,72 +62,47 @@ enum SSECategory
 
 struct SSEMod
 {
-	const char* mName;
-	int mNumber;
-	const char* mAuthor;
-	SSECategory mCategory;
-	//std::vector<SSEMod> mDependencies;
-	bool mInstalled;
-	const char* mLink;
-	
+	std::string         mName;
+	int                 mNumber;
+	std::string         mAuthor;
+	SSECategory         mCategory;
+	bool                mInstalled;
+	std::string         mLink;
+	std::vector<SSEMod> mDependencies;
 };
 
 const size_t BUFFER_SIZE = 1024;
-std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
 std::vector<SSEMod> ModList;
+std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
 
 #pragma region Main Functions
 void AddMod();
+void DisplayAllMods();
 void EditMod(int mNumber);
 void RemoveMod(int mNumber);
-void DisplayAllMods();
 #pragma endregion
 
 #pragma region Set Functions
-/// <summary>
-/// Prompts the user to input the Mod's number. It will return the submitted
-/// number if no mod in ModList already has that number, and will return -1
-/// if there already is a mod with that number
-/// </summary>
-/// <returns>The Mod's number or -1 if a mod with that number already exists</returns>
-int SetModNumber();
-
-char* SetModNameAuthor(const char* prompt);
-
-/// <summary>
-/// Prompts the user to enter in a Mod's category
-/// </summary>
-/// <returns>The Enum value of the submitted category</returns>
-SSECategory SetModCategory();
-//void SetModDependencies();
-
-/// <summary>
-/// Prompts the user to input whether or not a mod is installed or not
-/// </summary>
-/// <returns>True if the mod is installed, false otherwise</returns>
-bool SetModInstalled();
+SSECategory         SetModCategory();
+std::vector<SSEMod> SetModDependencies();
+bool                SetModInstalled();
+std::string         SetModNameAuthor(const char* prompt);
+int                 SetModNumber();
 #pragma endregion
 
 #pragma region Display Functions
+void        DisplayAllCategories();
 const char* DisplayCategoryName(int category);
-void DisplayAllCategories();
-void DisplayUserOptions(std::vector<const char*> options);
-void DisplayMod(SSEMod mod);
 const char* DisplayIsInstalled(bool mInstalled);
+void        DisplayMod(SSEMod mod);
+void        DisplayUserOptions(std::vector<const char*> options);
 #pragma endregion
 
 #pragma region Helper Functions
-void ClearCIN();
-
-/// <summary>
-/// Determines if a mod is in a SSEMod vector by the number put into the function
-/// </summary>
-/// <param name="mList">The vector to be searched</param>
-/// <param name="mNumber">The mod number that is to be found</param>
-/// <returns>The vector location of the mod if it is found, and -1 if it is not found</returns>
-int FindMod(std::vector<SSEMod> mList, int mNumber);
-SSEMod CreateMod(const char* mName, int mNumber, const char* mAuthor, SSECategory mCategory, bool mInstalled, const char* mLink);
-void AddDependencyMod(std::vector<SSEMod> &mDependencies);
+void        AddDependencyMod(std::vector<SSEMod>& mDependencies);
+void        ClearCIN();
+SSEMod      CreateMod(std::string mName, int mNumber,       std::string mAuthor, SSECategory mCategory, 
+					  bool mInstalled,   std::string mLink, std::vector<SSEMod> mDependencies);
 std::string CreateModLink(int mNumber);
+int         FindMod(std::vector<SSEMod> mList, int mNumber);
 #pragma endregion
-

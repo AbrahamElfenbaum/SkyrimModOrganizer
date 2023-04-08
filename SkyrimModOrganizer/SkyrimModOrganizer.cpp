@@ -10,10 +10,7 @@ int main()
 	// Set the parameter to the identifier for a leaked block
 	_CrtSetBreakAlloc(-1);
 	*/
-
-	const char* path = "12345";
-	std::string url = combineURL(12345);
-	std::cout << "Combined URL: " << url << std::endl;
+	AddMod();
 #if 0
 	bool loop = true;
 	int option = -1;
@@ -46,5 +43,4 @@ int main()
 		}
 	}
 #endif // 0
-
 }
