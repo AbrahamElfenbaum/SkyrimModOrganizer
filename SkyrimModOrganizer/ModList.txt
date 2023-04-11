@@ -1,0 +1,16 @@
+Test
+1996
+Me
+Stealth
+Is Not Installed
+https://www.nexusmods.com/skyrimspecialedition/mods/1996
+----------Dependencies----------
+--------------------------------
+Test2
+2022
+Me
+Stealth
+Is Not Installed
+https://www.nexusmods.com/skyrimspecialedition/mods/1996
+----------Dependencies----------
+--------------------------------

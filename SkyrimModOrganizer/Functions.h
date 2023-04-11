@@ -32,19 +32,24 @@ void DisplayAllMods()
 }
 void EditMod(int mNumber)
 {
-	if (FindMod(ModList, mNumber) == -1)
+	int n = FindMod(ModList, mNumber);
+	if ( n == -1)
 	{
 		std::cout << "No Such Mod Exists\n";
 		return;
 	}
+	std::cout << "What would you like to edit?\n";
+	DisplayChoices(ModProperties);
 }
 void RemoveMod(int mNumber)
 {
-	if (FindMod(ModList, mNumber) == -1)
+	int n = FindMod(ModList, mNumber);
+	if (n == -1)
 	{
 		std::cout << "No Such Mod Exists\n";
 		return;
 	}
+	ModList.erase(ModList.begin() + n);
 }
 #pragma endregion
 
@@ -140,24 +145,7 @@ int                 SetModNumber()
 
 #pragma region Display Functions
 void        DisplayAllCategories()
-{
-	// Define a vector of Skyrim mod categories
-	std::vector<std::string> categories =
-	{
-		"Alchemy",               "Animation",                            "Armour",
-		"Armour - Shields",                          "Audio",                 "Body, Face, and Hair",                 "Bug Fixes",
-		"Buildings",                                 "Cheats and God items",  "Cities, Towns, Villages, and Hamlets", "Clothing and Accessories",
-		"Collectables, Treasure Hunts, and Puzzles", "Combat",                "Crafting",                             "Creatures and Mounts",
-		"Dungeons",                                  "Environmental",         "Followers & Companions",               "Followers & Companions - Creatures",
-		"Gameplay",                                  "Guilds/Factions",       "Immersion",                            "Items and Objects - Player",
-		"Items and Objects - World",                 "Locations - New",       "Locations - Vanilla",                  "Magic - Gameplay",
-		"Magic - Spells & Enchantments",             "Miscellaneous",         "Modders Resources",                    "Models and Textures",
-		"NPC",                                       "Overhauls",             "Patches",                              "Player Homes",
-		"Presets - ENB and ReShade",                 "Quests and Adventures", "Races, Classes, and Birthsigns",       "Save Games",
-		"Shouts",                                    "Skills and Leveling",   "Stealth",                              "User Interface",
-		"Utilities",                                 "Visuals and Graphics",  "VR",                                   "Weapons",
-		"Weapons and Armour"
-	};
+{	
 	std::cout << "If the mod has no category, enter 0\n";
 	// Calculate the number of rows needed
 	int num_rows = (categories.size() + 3) / 4;
@@ -292,6 +280,13 @@ const char* DisplayCategoryName(int category)
 		return "Default";
 	}
 }
+void        DisplayChoices(std::vector<const char*> options)
+{
+	for (int i = 0; i < options.size(); i++)
+	{
+		std::cout << i + 1 << ") " << options[i] << std::endl;
+	}
+}
 void		DisplayDependencies(std::vector<SSEMod> mDependencies)
 {
 	std::cout << "----------Dependencies----------\n";
@@ -322,13 +317,6 @@ void        DisplayMod(SSEMod mod)
 		         "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << '\n' <<
 				 "Mod Link: "           << mod.mLink                          << '\n';
 	DisplayDependencies(mod.mDependencies);
-}
-void        DisplayUserOptions(std::vector<const char*> options)
-{
-	for (int i = 0; i < options.size(); i++)
-	{
-		std::cout << i + 1 << ": " << options[i] << std::endl;
-	}
 }
 #pragma endregion
 
@@ -399,4 +387,63 @@ int         FindMod(std::vector<SSEMod> mList, int mNumber)
 	//Mod Doesn't Exits
 	return -1;
 }
+void	    WriteToModList(SSEMod mod)
+{
+	std::ofstream outFile("ModList.txt", std::ios_base::app);
+	if (outFile.is_open())
+	{
+		outFile << mod.mName << '\n' <<
+			mod.mNumber << '\n' <<
+			mod.mAuthor << '\n' <<
+			DisplayCategoryName(mod.mCategory) << '\n' <<
+			DisplayIsInstalled(mod.mInstalled) << '\n' <<
+			mod.mLink << '\n' <<
+			"----------Dependencies----------\n";
+		for (auto d : mod.mDependencies)
+		{
+			outFile << d.mNumber << std::endl;
+		}
+		outFile << "--------------------------------\n";
+		outFile.close();
+	}
+	else
+	{
+		std::cout << "Unable to open file!" << std::endl;
+		return;
+	}
+}
 #pragma endregion
+
+int nFindMod(std::vector<SSEMod> mList)
+{
+	std::string input;
+	std::cout << "Enter the name or number of the mod you want to find: ";
+	getline(std::cin, input);
+	while (input.empty())
+	{
+		std::cout << "Invalid Entry. Enter the name or number of the mod you want to find: ";
+		getline(std::cin, input);
+	}
+	try {
+		int num = std::stoi(input);
+		std::cout << "You entered an integer: " << num << std::endl;
+		for (int i = 0; i < mList.size(); i++)
+		{
+			if (mList[i].mNumber == num)
+			{
+				return i;
+			}
+		}
+	}
+	catch (...) {
+		std::cout << "You entered a string: " << input << std::endl;
+		for (int i = 0; i < mList.size(); i++)
+		{
+			if (mList[i].mName == input)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
+}

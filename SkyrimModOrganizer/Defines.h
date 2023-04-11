@@ -71,8 +71,27 @@ struct SSEMod
 	std::vector<SSEMod> mDependencies;
 };
 
+#pragma region Vectors
 std::vector<SSEMod> ModList;
 std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
+std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Dependencies" };
+std::vector<std::string> categories =
+{
+	"Alchemy",               "Animation",                            "Armour",
+	"Armour - Shields",                          "Audio",                 "Body, Face, and Hair",                 "Bug Fixes",
+	"Buildings",                                 "Cheats and God items",  "Cities, Towns, Villages, and Hamlets", "Clothing and Accessories",
+	"Collectables, Treasure Hunts, and Puzzles", "Combat",                "Crafting",                             "Creatures and Mounts",
+	"Dungeons",                                  "Environmental",         "Followers & Companions",               "Followers & Companions - Creatures",
+	"Gameplay",                                  "Guilds/Factions",       "Immersion",                            "Items and Objects - Player",
+	"Items and Objects - World",                 "Locations - New",       "Locations - Vanilla",                  "Magic - Gameplay",
+	"Magic - Spells & Enchantments",             "Miscellaneous",         "Modders Resources",                    "Models and Textures",
+	"NPC",                                       "Overhauls",             "Patches",                              "Player Homes",
+	"Presets - ENB and ReShade",                 "Quests and Adventures", "Races, Classes, and Birthsigns",       "Save Games",
+	"Shouts",                                    "Skills and Leveling",   "Stealth",                              "User Interface",
+	"Utilities",                                 "Visuals and Graphics",  "VR",                                   "Weapons",
+	"Weapons and Armour"
+};
+#pragma endregion
 
 #pragma region Main Functions
 void AddMod();
@@ -92,10 +111,10 @@ int                 SetModNumber();
 #pragma region Display Functions
 void        DisplayAllCategories();
 const char* DisplayCategoryName(int category);
+void        DisplayChoices(std::vector<const char*> options);
 void		DisplayDependencies(std::vector<SSEMod> mDependencies);
 const char* DisplayIsInstalled(bool mInstalled);
 void        DisplayMod(SSEMod mod);
-void        DisplayUserOptions(std::vector<const char*> options);
 #pragma endregion
 
 #pragma region Helper Functions
@@ -105,4 +124,6 @@ SSEMod      CreateMod(std::string mName, int mNumber,       std::string mAuthor,
 					  bool mInstalled,   std::string mLink, std::vector<SSEMod> mDependencies);
 std::string CreateModLink(int mNumber);
 int         FindMod(std::vector<SSEMod> mList, int mNumber);
+void	    WriteToModList(SSEMod mod);
 #pragma endregion
+
