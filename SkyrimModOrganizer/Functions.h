@@ -4,59 +4,59 @@
 #pragma region Main Functions
 void AddMod()
 {
-
-	int mNumber = SetModNumber();//Sets the int that will become the mod's number
-	if (mNumber == -1)//-1 means that the mod already exists in ModList
+	//Step 1: Ask for a mod number. Once the input is a valid number,
+	//check to see if a mod with that number alreay exists. If it does,
+	//end the code. In not, continue inputting information
+	int mNumber = SetModNumber(ModList);
+	if (mNumber == -1)
 	{
-		//Informs the user that the mod already exists and exits out of the function
-		std::cout << "This Mod Already Exists\n";
+		std::cout << "A Mod With This Number Already Exists\n";
 		return;
 	}
-	//The following only happens if the mod number was not found in ModList
-	std::string         mLink         = CreateModLink(mNumber);//creates the link to the mod on Nexus.com using the mod's number to complete the url
-	std::string         mName         = SetModNameAuthor("Enter Mod Name: ");//Sets the string that will become the name of the mod
-	SSECategory         mCategory     = SetModCategory();//Sets the SSECategory that will become the category of the mod
-	std::string         mAuthor       = SetModNameAuthor("Enter Mod Author: ");//Sets the string that will become the author of the mod
-	bool                mInstalled    = SetModInstalled();//Sets the bool that will tell if the mod is installed or not
-	std::vector<SSEMod> mDependencies = SetModDependencies();//Sets the SSEMod vector that will become the list of the mod's dependecies
-	ModList.push_back(CreateMod(mName, mNumber, mAuthor, mCategory,  mInstalled, mLink, mDependencies));//Pushes the created mod into the ModList vector.
+	/*--------------------Done--------------------*/
+
+	//Step 2: Create the mod link using mNumber to complete the url
+	std::string mLink = SetModLink(mNumber);
+	/*--------------------Done--------------------*/
+
+	//Step 3: Ask the user to input the mod's name
+	std::string mName = SetModNameAuthor("Enter Mod Name: ");
+	/*--------------------Done--------------------*/
+
+	//Step 4: Ask the user to input the mod's category.
+	SSECategory mCategory = SetModCategory();
+	/*--------------------Done--------------------*/
+
+	//Step 5: Ask the user to input the mod author's name
+	std::string mAuthor = SetModNameAuthor("Enter Mod Author: ");
+	/*--------------------Done--------------------*/
+
+	//Step 6: Ask the user to input if the mod is installed or not
+	bool mInstalled = SetModInstalled();
+	/*--------------------Done--------------------*/
+
+	//Step 7: Ask the user to input any dependencies the mod has
+	std::vector<SSEMod> mDependencies = SetModDependencies();
+
+	//Step 8: Take all the information gathered and put it all in the ModList Vector
+	SSEMod mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink, mDependencies };
+	ModList.emplace_back(mod);
+	/*--------------------Done--------------------*/
 }
 void DisplayAllMods()
 {
 	//Calls the DisplayMod function for each mod that exists in the ModList vector
-	for (auto m : ModList)
+	for (const auto& m : ModList)
 	{
 		DisplayMod(m);
 		std::cout << std::endl;
 	}
-}
-void EditMod(int mNumber)
-{
-	int n = FindMod(ModList, mNumber);
-	if ( n == -1)
-	{
-		std::cout << "No Such Mod Exists\n";
-		return;
-	}
-	std::cout << "What would you like to edit?\n";
-	DisplayChoices(ModProperties);
-}
-void RemoveMod(int mNumber)
-{
-	int n = FindMod(ModList, mNumber);
-	if (n == -1)
-	{
-		std::cout << "No Such Mod Exists\n";
-		return;
-	}
-	ModList.erase(ModList.begin() + n);
 }
 #pragma endregion
 
 #pragma region Set Functions
 SSECategory         SetModCategory()
 {
-
 	int mCategory;
 	std::cout << "Here are the mod categories.\n";
 	DisplayAllCategories();
@@ -109,6 +109,19 @@ bool                SetModInstalled()
 	}
 	return mInstalled;
 }
+std::string         SetModLink(int mNumber)
+{
+	std::string numString = std::to_string(mNumber);
+	const char* path = numString.c_str();
+	const char* baseURL = "https://www.nexusmods.com/skyrimspecialedition/mods/";
+	int len = 52 + strlen(path) + 1;
+	char* result = new char[len];
+	strcpy_s(result, len, baseURL);
+	strcat_s(result, len, path);
+	std::string url(result);
+	delete[] result;
+	return url;
+}
 std::string         SetModNameAuthor(const char* prompt)
 {
 	ClearCIN();
@@ -122,7 +135,7 @@ std::string         SetModNameAuthor(const char* prompt)
 	}
 	return input;
 }
-int                 SetModNumber()
+int                 SetModNumber(std::vector<SSEMod>& mList)
 {
 	int mNumber;
 	std::cout << "Enter Mod Number: ";
@@ -133,19 +146,19 @@ int                 SetModNumber()
 		std::cout << "Invalid Entry. Enter Mod Number: ";
 		std::cin >> mNumber;
 	}
-	if (FindMod(ModList, mNumber) == -1) 
+
+	auto result = FindMod(mList, mNumber);
+	if (result.first)//A mod that has the number mNumber has been found
 	{
-		//Mod Doesn't Exist
-		return mNumber;
+		return -1;
 	}
-	//Mod Exists
-	return -1;
+	return mNumber;
 }
 #pragma endregion
 
 #pragma region Display Functions
-void        DisplayAllCategories()
-{	
+void DisplayAllCategories()
+{
 	std::cout << "If the mod has no category, enter 0\n";
 	// Calculate the number of rows needed
 	int num_rows = (categories.size() + 3) / 4;
@@ -321,73 +334,78 @@ void        DisplayMod(SSEMod mod)
 #pragma endregion
 
 #pragma region Helper Functions
-void        AddDependencyMod(std::vector<SSEMod>& mDependencies)
+void                 AddDependencyMod(std::vector<SSEMod>& mDependencies)
 {
-	int nmNumber;
+	std::pair<int, bool> result;
+	int mNumber;
+	//Step 1: Ask the user to enter in the mod's number and ensure that what was entered
+	// is a valid input
 	std::cout << "Enter Mod Number: ";
-	std::cin >> nmNumber;
-	while (!std::cin.good() || nmNumber < 0)
+	std::cin >> mNumber;
+	while (!std::cin.good() || mNumber < 0)
 	{
 		ClearCIN();
 		std::cout << "Invalid Entry. Enter Mod Number: ";
-		std::cin >> nmNumber;
+		std::cin >> mNumber;
 	}
-	if (FindMod(ModList, nmNumber) > -1)//The mod already exists in ModList
+	//Step 2: Determine if the mod already exists in the mDependecies vector
+	result = FindMod(mDependencies, mNumber);
+	if (!result.first)//Mod Doesn Not Exists in mDependencies
 	{
-		if (FindMod(mDependencies, nmNumber))//The mod is already in mDependencies
+		//Step 3: Determine if the mod already exists in the ModList vector
+		result = FindMod(ModList, mNumber);
+		if (result.first)//Mod Exists in ModList
 		{
+			//Step 4: If the mod does exist in ModList, put that mod
+			//into mmDependencies and exit out of the method
+			mDependencies.push_back(ModList[result.second]);
 			return;
 		}
-		mDependencies.push_back(ModList[FindMod(ModList, nmNumber)]);
-		return;
+		//Step 5: If there is no such mod, create it, put it into Modlist, then
+		//take that pointer and put it in mDependencies
+		std::string         mLink = SetModLink(mNumber);
+		std::string         mName = SetModNameAuthor("Enter Mod Name: ");
+		SSECategory         mCategory = SetModCategory();
+		std::string         mAuthor = SetModNameAuthor("Enter Mod Author: ");
+		bool                mInstalled = SetModInstalled();
+		std::vector<SSEMod> mDependencies = SetModDependencies();
+		SSEMod mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink, mDependencies };
+		ModList.emplace_back(mod);
+		mDependencies.push_back(ModList.back());
 	}
-	std::string         nmLink         = CreateModLink(nmNumber);
-	std::string         nmName         = SetModNameAuthor("Enter Mod Name: ");
-	SSECategory         nmCategory     = SetModCategory();
-	std::string         nmAuthor       = SetModNameAuthor("Enter Mod Author: ");
-	bool                nmInstalled    = SetModInstalled();
-	std::vector<SSEMod> nmDependencies = SetModDependencies();
-	SSEMod              newMod        = CreateMod(nmName, nmNumber, nmAuthor, nmCategory, nmInstalled, nmLink, nmDependencies);
-	ModList.push_back(newMod);
-	mDependencies.push_back(newMod);
 }
-void        ClearCIN()
+void                 ClearCIN()
 {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
-SSEMod      CreateMod(std::string mName, int mNumber,       std::string mAuthor, SSECategory mCategory, 
-					  bool mInstalled,   std::string mLink, std::vector<SSEMod> mDependencies)
+std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber)
 {
-	return SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink, mDependencies };
-}
-std::string CreateModLink(int mNumber)
-{
-	std::string numString = std::to_string(mNumber);
-	const char* path = numString.c_str();
-	const char* baseURL = "https://www.nexusmods.com/skyrimspecialedition/mods/";
-	int len = 52 + strlen(path) + 1;
-	char* result = new char[len];
-	strcpy_s(result, len, baseURL);
-	strcat_s(result, len, path);
-	std::string url(result);
-	delete[] result;
-	return url;
-}
-int         FindMod(std::vector<SSEMod> mList, int mNumber)
-{
-	for (int i = 0; i < mList.size(); i++)
+	int i = 0;
+	for (const auto& mod : mList)
 	{
-		if (mList[i].mNumber == mNumber)
+		if (mod.mNumber == mNumber)
 		{
-			//Mod Exists
-			return i;
+			return std::make_pair(true, i);//Mod Found
 		}
+		i++;
 	}
-	//Mod Doesn't Exits
-	return -1;
+	return std::make_pair(false, -1);//Mod Not Found
 }
-void	    WriteToModList(SSEMod mod)
+std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, std::string mName)
+{
+	int i = 0;
+	for (const auto& mod : mList)
+	{
+		if (mod.mName == mName)
+		{
+			return std::make_pair(true, i);//Mod Found
+		}
+		i++;
+	}
+	return std::make_pair(false, -1);//Mod Not Found
+}
+void	             WriteToModList(SSEMod mod)
 {
 	std::ofstream outFile("ModList.txt", std::ios_base::app);
 	if (outFile.is_open())
@@ -413,37 +431,3 @@ void	    WriteToModList(SSEMod mod)
 	}
 }
 #pragma endregion
-
-int nFindMod(std::vector<SSEMod> mList)
-{
-	std::string input;
-	std::cout << "Enter the name or number of the mod you want to find: ";
-	getline(std::cin, input);
-	while (input.empty())
-	{
-		std::cout << "Invalid Entry. Enter the name or number of the mod you want to find: ";
-		getline(std::cin, input);
-	}
-	try {
-		int num = std::stoi(input);
-		std::cout << "You entered an integer: " << num << std::endl;
-		for (int i = 0; i < mList.size(); i++)
-		{
-			if (mList[i].mNumber == num)
-			{
-				return i;
-			}
-		}
-	}
-	catch (...) {
-		std::cout << "You entered a string: " << input << std::endl;
-		for (int i = 0; i < mList.size(); i++)
-		{
-			if (mList[i].mName == input)
-			{
-				return i;
-			}
-		}
-	}
-	return -1;
-}

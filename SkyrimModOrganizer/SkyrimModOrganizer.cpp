@@ -4,7 +4,7 @@ int main()
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//												      TO DO:                                                      //
 	// 1. Complete the Add, Edit and Remove Mod functions, and any helper functions needed for them to work correctly //
-	// 2. Save the ModList vector into a .txt file. Chnage the code as needed to support this function                // 
+	// 2. Save the ModList vector into a .txt file. Change the code as needed to support this function                // 
 	// 2. See if ther is a way to change all of the strings in the SSEMod struct into const char*				      //
 	// 3. See if ther is a way to encode the names, authors and links into smaller codes and back again			      //
 	// 4. Find blocks of repeated code and see if they can be made into functions to avoid duplication				  //

@@ -3,8 +3,6 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <limits> 
-#include <cstring>
 #include <iomanip>
 
 enum SSECategory
@@ -105,7 +103,8 @@ SSECategory         SetModCategory();
 std::vector<SSEMod> SetModDependencies();
 bool                SetModInstalled();
 std::string         SetModNameAuthor(const char* prompt);
-int                 SetModNumber();
+int                 SetModNumber(std::vector<SSEMod>& mList);
+std::string         SetModLink(int mNumber);
 #pragma endregion
 
 #pragma region Display Functions
@@ -118,12 +117,10 @@ void        DisplayMod(SSEMod mod);
 #pragma endregion
 
 #pragma region Helper Functions
-void        AddDependencyMod(std::vector<SSEMod>& mDependencies);
-void        ClearCIN();
-SSEMod      CreateMod(std::string mName, int mNumber,       std::string mAuthor, SSECategory mCategory, 
-					  bool mInstalled,   std::string mLink, std::vector<SSEMod> mDependencies);
-std::string CreateModLink(int mNumber);
-int         FindMod(std::vector<SSEMod> mList, int mNumber);
+void                 AddDependencyMod(std::vector<SSEMod>& mDependencies);
+void                 ClearCIN();
+std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber);
+std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, std::string mName);
 void	    WriteToModList(SSEMod mod);
 #pragma endregion
 
