@@ -37,9 +37,14 @@ int main()
 	DisplayAllMods();
 	
 	//std::cout << FindMod(ModList).second << std::endl;
-
-	AddMod();
-	//DisplayAllMods();
+	bool loop;
+	do
+	{
+		AddMod();
+		DisplayAllMods();
+		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+	}while(loop)
+	
 	
 #if 0
 	bool loop = true;
