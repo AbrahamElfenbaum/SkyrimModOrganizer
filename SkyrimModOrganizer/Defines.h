@@ -104,26 +104,26 @@ SSECategory         SetModCategory();
 std::vector<SSEMod> SetModDependencies();
 bool                SetModInstalled();
 std::string         SetModNameAuthor(const char* prompt);
-int                 SetModNumber(std::vector<SSEMod>& mList);
+int                 SetModNumber(const std::vector<SSEMod>& mList);
 std::string         SetModLink(int mNumber);
 #pragma endregion
 
 #pragma region Display Functions
 void        DisplayAllCategories();
 const char* DisplayCategoryName(int category);
-void        DisplayChoices(std::vector<const char*> options);
-void		DisplayDependencies(std::vector<SSEMod> mDependencies);
+void        DisplayChoices(const std::vector<const char*>& options);
+void		DisplayDependencies(const std::vector<SSEMod>& mDependencies);
 const char* DisplayIsInstalled(bool mInstalled);
-void        DisplayMod(SSEMod mod);
+void        DisplayMod(SSEMod& mod);
 #pragma endregion
 
 #pragma region Helper Functions
 void                 AddDependencyMod(std::vector<SSEMod>& mDependencies);
 void				 AddModToModList(int mNumber);
 void                 ClearCIN();
-std::pair<bool, int> FindMod(std::vector<SSEMod>& mList);
-std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber);
-std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, std::string mName);
+std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList);
+std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber);
+std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName);
 void	             WriteToModList(SSEMod mod);
 #pragma endregion
 

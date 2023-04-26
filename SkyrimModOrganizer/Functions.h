@@ -19,10 +19,10 @@ void AddMod()
 void DisplayAllMods()
 {
 	//Calls the DisplayMod function for each mod that exists in the ModList vector
-	for (const auto& m : ModList)
+	for (auto& m : ModList)
 	{
 		DisplayMod(m);
-		std::cout << std::endl;
+		std::cout << '\n';
 	}
 }
 void EditMod(int mNumber)
@@ -75,10 +75,9 @@ std::string         SetModLink(int mNumber)
 {
 	auto numString = std::to_string(mNumber);
 	auto path = numString.c_str();
-	auto baseURL = "https://www.nexusmods.com/skyrimspecialedition/mods/";
 	auto len = 52 + strlen(path) + 1;
 	auto result = new char[len];
-	strcpy_s(result, len, baseURL);
+	strcpy_s(result, len, "https://www.nexusmods.com/skyrimspecialedition/mods/");
 	strcat_s(result, len, path);
 	std::string url(result);
 	delete[] result;
@@ -97,7 +96,7 @@ std::string         SetModNameAuthor(const char* prompt)
 	}
 	return input;
 }
-int                 SetModNumber(std::vector<SSEMod>& mList)
+int                 SetModNumber(const std::vector<SSEMod>& mList)
 {
 	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
 	auto result = FindMod(mList, mNumber);
@@ -136,7 +135,7 @@ void        DisplayAllCategories()
 				std::cout << std::setw(1) << std::left << (index + 1) << ") " << std::setw(37) << std::left << categories[index];
 			}
 		}
-		std::cout << std::endl;
+		std::cout << '\n';
 	}
 }
 const char* DisplayCategoryName(int category)
@@ -246,19 +245,21 @@ const char* DisplayCategoryName(int category)
 		return "Default";
 	}
 }
-void        DisplayChoices(std::vector<const char*> options)
+void        DisplayChoices(const std::vector<const char*>& options)
 {
-	for (int i = 0; i < options.size(); i++)
+	auto i = 1;
+	for (auto option : options)
 	{
-		std::cout << i + 1 << ") " << options[i] << std::endl;
+		std::cout << i << ") " << options[i] << '\n';
+		i++;
 	}
 }
-void		DisplayDependencies(std::vector<SSEMod> mDependencies)
+void		DisplayDependencies(const std::vector<SSEMod>& mDependencies)
 {
 	std::cout << "----------Dependencies----------\n";
-	for (auto d : mDependencies)
+	for (const auto& d : mDependencies)
 	{
-		std::cout << d.mNumber << ": " << d.mName << std::endl;
+		std::cout << d.mNumber << ": " << d.mName << '\n';
 	}
 	std::cout << "--------------------------------\n";
 }
@@ -273,7 +274,7 @@ const char* DisplayIsInstalled(bool mInstalled)
 		return "Is Not Installed";
 	}
 }
-void        DisplayMod(SSEMod mod)
+void        DisplayMod(SSEMod& mod)
 {
 
 	std::cout << "Mod Name: "           << mod.mName                          << '\n' <<
@@ -315,6 +316,7 @@ void                 AddDependencyMod(std::vector<SSEMod>& mDependencies)
 }
 void                 AddModToModList(int mNumber)
 {
+	
 	auto mLink = SetModLink(mNumber);
 	auto mName = SetModNameAuthor("Enter Mod Name: ");
 	auto mCategory = SetModCategory();
@@ -329,7 +331,7 @@ void                 ClearCIN()
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
-std::pair<bool, int> FindMod(std::vector<SSEMod>& mList)
+std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList)
 {
 	std::string input;
 	std::cout << "Enter the name or number of the mod you want to find: ";
@@ -339,30 +341,33 @@ std::pair<bool, int> FindMod(std::vector<SSEMod>& mList)
 		std::cout << "Invalid Entry. Enter the name or number of the mod you want to find: ";
 		getline(std::cin, input);
 	}
+	auto i = 0;
 	try {
 		auto num = std::stoi(input);
-		std::cout << "You entered an integer: " << num << std::endl;
-		for (int i = 0; i < mList.size(); i++)
+		std::cout << "You entered an integer: " << num << '\n';
+		for (const auto& mod : mList)
 		{
-			if (mList[i].mNumber == num)
+			if (mod.mNumber == num)
 			{
 				return std::make_pair(true, i);//Mod Found
 			}
+			i++;
 		}
 	}
 	catch (...) {
-		std::cout << "You entered a string: " << input << std::endl;
-		for (int i = 0; i < mList.size(); i++)
+		std::cout << "You entered a string: " << input << '\n';
+		for (const auto& mod : mList)
 		{
-			if (mList[i].mName == input)
+			if (mod.mName == input)
 			{
 				return std::make_pair(true, i);//Mod Found
 			}
+			i++;
 		}
 	}
 	return std::make_pair(false, -1);//Mod Not Found
 }
-std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber)
+std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber)
 {
 	auto i = 0;
 	for (const auto& mod : mList)
@@ -375,7 +380,7 @@ std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber)
 	}
 	return std::make_pair(false, -1);//Mod Not Found
 }
-std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, std::string mName)
+std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName)
 {
 	auto i = 0;
 	for (const auto& mod : mList)
@@ -402,14 +407,14 @@ void	             WriteToModList(SSEMod mod)
 			"----------Dependencies----------\n";
 		for (auto d : mod.mDependencies)
 		{
-			outFile << d.mNumber << std::endl;
+			outFile << d.mNumber << '\n';
 		}
 		outFile << "--------------------------------\n";
 		outFile.close();
 	}
 	else
 	{
-		std::cout << "Unable to open file!" << std::endl;
+		std::cout << "Unable to open file!'\n'";
 		return;
 	}
 }
