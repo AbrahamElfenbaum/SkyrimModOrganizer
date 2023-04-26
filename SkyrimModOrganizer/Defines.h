@@ -118,9 +118,10 @@ void        DisplayMod(SSEMod mod);
 
 #pragma region Helper Functions
 void                 AddDependencyMod(std::vector<SSEMod>& mDependencies);
+void				 AddModToModList(int mNumber);
 void                 ClearCIN();
 std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber);
 std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, std::string mName);
-void	    WriteToModList(SSEMod mod);
+void	             WriteToModList(SSEMod mod);
 #pragma endregion
 

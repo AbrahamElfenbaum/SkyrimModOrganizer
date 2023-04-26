@@ -11,6 +11,14 @@ int main()
 	// 5. Look to see if there are other ways to make the code more efficient/elegant								  //
 	// 6. Make a proper UI for the code																				  //
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	AddModToModList(1);
+	AddModToModList(2);
+	AddModToModList(3);
+	DisplayAllMods();
+
+	//auto test = SetModDependencies();
+	
+	
 #if 0
 	bool loop = true;
 	int option = -1;
