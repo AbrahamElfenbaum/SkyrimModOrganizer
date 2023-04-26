@@ -8,7 +8,7 @@ void AddMod()
 	//check to see if a mod with that number alreay exists. If it does,
 	//end the code. In not, continue inputting information
 	//STATUS: COMPLETE
-	int mNumber = SetModNumber(ModList);
+	auto mNumber = SetModNumber(ModList);
 	if (mNumber == -1)
 	{
 		std::cout << "A Mod With This Number Already Exists\n";
@@ -25,45 +25,59 @@ void DisplayAllMods()
 		std::cout << std::endl;
 	}
 }
+void EditMod(int mNumber)
+{
+
+}
+void RemoveMod(int mNumber)
+{
+
+}
 #pragma endregion
 
 #pragma region Set Functions
 SSECategory         SetModCategory()
 {
-	int mCategory;
 	std::cout << "Here are the mod categories.\n";
 	DisplayAllCategories();
-	std::cout << "Enter Mod Category: ";
-	std::cin >> mCategory;
-	while (!std::cin.good() || mCategory < 0 || mCategory > 48)
-	{
-		ClearCIN();
-		std::cout << "Invalid Entry. Enter Mod Category: ";
-		std::cin >> mCategory;
-	}
-	return (SSECategory)mCategory;
+	return static_cast<SSECategory>(GetValidInput<int>("Enter Mod Category: ", [](int n) { return n >= 0 && n <= 48; }));
 }
+std::vector<SSEMod> SetModDependencies()
+{
+	//Step 1: Ask the user to input whetehr or not the mod has any dependencies and ensure that what was entered is a valid input.
+	//STATUS: COMPLETE
+	std::vector<SSEMod> mDependencies;
+	auto hasDependency = GetValidInput<bool>("Does the mod have any dependencies? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
 
+	//Step 2: If the mod has no dependencies, exit the function
+	//STATUS: COMPLETE
+	if (hasDependency == false)
+	{
+		return mDependencies;
+	}
+
+	//Step 3: If the mod does have a dependency, call the AddDependencyMod function
+	//STATUS: COMPLETE
+	while (hasDependency)
+	{
+		AddDependencyMod(mDependencies);
+		//Step 4: Ask if there is another dependency
+		//STATUS: COMPLETE
+		hasDependency = GetValidInput<bool>("Does the mod have more dependencies? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+		
+	}
+}
 bool                SetModInstalled()
 {
-	bool mInstalled;
-	std::cout << "Is the mod installed? (1 = Yes, 0 = No): ";
-	std::cin >> mInstalled;
-	while (!std::cin.good() || (mInstalled != 0 && mInstalled != 1))
-	{
-		ClearCIN();
-		std::cout << "Invalid Entry. Is the mod installed? (1 = Yes, 0 = No): ";
-		std::cin >> mInstalled;
-	}
-	return mInstalled;
+	return GetValidInput<bool>("Is the mod installed? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
 }
 std::string         SetModLink(int mNumber)
 {
-	std::string numString = std::to_string(mNumber);
-	const char* path = numString.c_str();
-	const char* baseURL = "https://www.nexusmods.com/skyrimspecialedition/mods/";
-	int len = 52 + strlen(path) + 1;
-	char* result = new char[len];
+	auto numString = std::to_string(mNumber);
+	auto path = numString.c_str();
+	auto baseURL = "https://www.nexusmods.com/skyrimspecialedition/mods/";
+	auto len = 52 + strlen(path) + 1;
+	auto result = new char[len];
 	strcpy_s(result, len, baseURL);
 	strcat_s(result, len, path);
 	std::string url(result);
@@ -85,16 +99,7 @@ std::string         SetModNameAuthor(const char* prompt)
 }
 int                 SetModNumber(std::vector<SSEMod>& mList)
 {
-	int mNumber;
-	std::cout << "Enter Mod Number: ";
-	std::cin >> mNumber;
-	while (!std::cin.good() || mNumber < 0)
-	{
-		ClearCIN();
-		std::cout << "Invalid Entry. Enter Mod Number: ";
-		std::cin >> mNumber;
-	}
-
+	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
 	auto result = FindMod(mList, mNumber);
 	if (result.first)//A mod that has the number mNumber has been found
 	{
@@ -282,15 +287,41 @@ void        DisplayMod(SSEMod mod)
 #pragma endregion
 
 #pragma region Helper Functions
+void                 AddDependencyMod(std::vector<SSEMod>& mDependencies)
+{
+	//Step 1: Ask the user to enter in the mod's number and ensure that what was entered is a valid input.
+	//STATUS: COMPLETE
+	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
+
+	//Step 2: Determine if the mod already exists in the mDependecies vector. If it does, end the function.
+	//STATUS: COMPLETE
+	auto result = FindMod(mDependencies, mNumber);
+	if (result.first)//Mod Found in mDependencies
+		return;
+
+	//Step 3: Determine if the mod already exists in the ModList vector. If it does put that mod into mDependencies and exit out of the function.
+	//STATUS: COMPLETE
+	result = FindMod(ModList, mNumber);
+	if (result.first)//Mod Found in ModList
+	{
+		mDependencies.emplace_back(ModList[result.second]);
+		return;
+	}
+
+	//Step 4: If there is no such mod, create it, put the mod first into Modlist, then take the pointer to that mod in ModList and put it in mDependencies.
+	//STATUS: COMPLETE
+	AddModToModList(mNumber);
+	mDependencies.emplace_back(ModList.back());
+}
 void                 AddModToModList(int mNumber)
 {
-	std::string mLink = SetModLink(mNumber);
-	std::string mName = SetModNameAuthor("Enter Mod Name: ");
-	SSECategory mCategory = SetModCategory();
-	std::string mAuthor = SetModNameAuthor("Enter Mod Author: ");
-	bool mInstalled = SetModInstalled();
-	std::vector<SSEMod> mDependencies;// = SetModDependencies();
-	SSEMod mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink, mDependencies };
+	auto mLink = SetModLink(mNumber);
+	auto mName = SetModNameAuthor("Enter Mod Name: ");
+	auto mCategory = SetModCategory();
+	auto mAuthor = SetModNameAuthor("Enter Mod Author: ");
+	auto mInstalled = SetModInstalled();
+	auto mDependencies = SetModDependencies();
+	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink, mDependencies };
 	ModList.emplace_back(mod);
 }
 void                 ClearCIN()
@@ -298,9 +329,42 @@ void                 ClearCIN()
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
+std::pair<bool, int> FindMod(std::vector<SSEMod>& mList)
+{
+	std::string input;
+	std::cout << "Enter the name or number of the mod you want to find: ";
+	getline(std::cin, input);
+	while (input.empty())
+	{
+		std::cout << "Invalid Entry. Enter the name or number of the mod you want to find: ";
+		getline(std::cin, input);
+	}
+	try {
+		auto num = std::stoi(input);
+		std::cout << "You entered an integer: " << num << std::endl;
+		for (int i = 0; i < mList.size(); i++)
+		{
+			if (mList[i].mNumber == num)
+			{
+				return std::make_pair(true, i);//Mod Found
+			}
+		}
+	}
+	catch (...) {
+		std::cout << "You entered a string: " << input << std::endl;
+		for (int i = 0; i < mList.size(); i++)
+		{
+			if (mList[i].mName == input)
+			{
+				return std::make_pair(true, i);//Mod Found
+			}
+		}
+	}
+	return std::make_pair(false, -1);//Mod Not Found
+}
 std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber)
 {
-	int i = 0;
+	auto i = 0;
 	for (const auto& mod : mList)
 	{
 		if (mod.mNumber == mNumber)
@@ -313,7 +377,7 @@ std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, int mNumber)
 }
 std::pair<bool, int> FindMod(std::vector<SSEMod>& mList, std::string mName)
 {
-	int i = 0;
+	auto i = 0;
 	for (const auto& mod : mList)
 	{
 		if (mod.mName == mName)
@@ -350,52 +414,3 @@ void	             WriteToModList(SSEMod mod)
 	}
 }
 #pragma endregion
-
-
-
-
-
-/*
-std::vector<SSEMod> SetModDependencies()
-{
-	//Step 1: Ask the user to input whetehr or not the mod has any dependencies and ensure that what was entered is a valid input.
-	//STATUS: IN PROGRESS
-}
-*/
-
-void AddDependencyMod(std::vector<SSEMod>& mDependencies)
-{
-	//Step 1: Ask the user to enter in the mod's number and ensure that what was entered is a valid input.
-	//STATUS: COMPLETE
-	int mNumber;
-	std::cout << "Enter Mod Number: ";
-	std::cin >> mNumber;
-	while (!std::cin.good() || mNumber < 0)
-	{
-		ClearCIN();
-		std::cout << "Invalid Entry. Enter Mod Number: ";
-		std::cin >> mNumber;
-	}
-
-	//Step 2: Determine if the mod already exists in the mDependecies vector. If it does, end the function.
-	//STATUS: COMPLETE
-	auto result = FindMod(mDependencies, mNumber);
-	if (result.first)//Mod Found in mDependencies
-		return;
-	
-	//Step 3: Determine if the mod already exists in the ModList vector. If it does put that mod into mDependencies and exit out of the function.
-	//STATUS: COMPLETE
-	result = FindMod(ModList, mNumber);
-	if (result.first)//Mod Found in ModList
-	{
-		mDependencies.push_back(ModList[result.second]);
-		return;
-	}
-	
-	//Step 4: If there is no such mod, create it, put the mod first into Modlist, then take the pointer to that mod in ModList and put it in mDependencies.
-	//STATUS: IN PROGRESS
-	AddModToModList(mNumber);
-	mDependencies.push_back(ModList.back());
-
-}
-
