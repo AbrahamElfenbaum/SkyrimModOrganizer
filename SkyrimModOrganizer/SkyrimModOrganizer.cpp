@@ -19,6 +19,7 @@ int main()
 
 	Future Plans:
 	-Comment the code to make it understandable to other people reading it
+	-Make test cases to make testing the code easier
 	-Color the text so that each aspect of the mod is a bit more distinguishable
 	-Add mEnabled field to the SSEMod struct. A mod can be installed, but not enabled
 	-Replace/modify adding to the ModList Vector so that the contents of the list are saved. As the code is now, the user
