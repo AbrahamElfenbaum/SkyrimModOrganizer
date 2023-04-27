@@ -102,7 +102,7 @@ void RemoveMod(int mNumber);
 
 #pragma region Set Functions
 SSECategory         SetModCategory();
-std::vector<SSEMod> SetModDependencies();
+std::vector<SSEMod> SetModDependencies(int mNumber);
 bool                SetModEnabledInstalled(const char* prompt);
 std::string         SetModAuthorName(const char* prompt);
 int                 SetModNumber(const std::vector<SSEMod>& mList);
@@ -119,7 +119,7 @@ void        DisplayMod(SSEMod& mod);
 #pragma endregion
 
 #pragma region Helper Functions
-void                 AddDependencyMod(std::vector<SSEMod>& mDependencies);
+void                 AddDependencyMod(std::vector<SSEMod>& mDependencies, int n);
 void				 AddModToModList(int mNumber);
 void                 ClearCIN();
 std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList);

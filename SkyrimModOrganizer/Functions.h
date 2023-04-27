@@ -42,7 +42,7 @@ SSECategory         SetModCategory()
 	DisplayAllCategories();
 	return static_cast<SSECategory>(GetValidInput<int>("Enter Mod Category: ", [](int n) { return n >= 0 && n <= 48; }));
 }
-std::vector<SSEMod> SetModDependencies()
+std::vector<SSEMod> SetModDependencies(int mNumber)
 {
 	//Step 1: Ask the user to input whetehr or not the mod has any dependencies and ensure that what was entered is a valid input.
 	//STATUS: COMPLETE
@@ -60,7 +60,7 @@ std::vector<SSEMod> SetModDependencies()
 	//STATUS: COMPLETE
 	while (hasDependency)
 	{
-		AddDependencyMod(mDependencies);
+		AddDependencyMod(mDependencies, mNumber);
 		//Step 4: Ask if there is another dependency
 		//STATUS: COMPLETE
 		hasDependency = GetValidInput<bool>("Does the mod have more dependencies? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
@@ -300,29 +300,44 @@ void        DisplayMod(SSEMod& mod)
 #pragma endregion
 
 #pragma region Helper Functions
-void                 AddDependencyMod(std::vector<SSEMod>& mDependencies)
+void                 AddDependencyMod(std::vector<SSEMod>& mDependencies, int n)
 {
 	//Step 1: Ask the user to enter in the mod's number and ensure that what was entered is a valid input.
 	//STATUS: COMPLETE
 	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
 
-	//Step 2: Determine if the mod already exists in the mDependecies vector. If it does, end the function.
+	//Step 3: Determine if the user made the mod a dependency for itself
+	//STATUS: COMPLETE
+	if (mNumber == n)//Mod is a dependency of itself
+	{
+		std::cout << "Error: Mod cannot be a dependency of itself\n";
+		return;
+	}
+		
+
+	//Step 3: Determine if the mod already exists in the mDependecies vector. If it does, end the function.
 	//STATUS: COMPLETE
 	auto result = FindMod(mDependencies, mNumber);
 	if (result.first)//Mod Found in mDependencies
+	{
+		std::cout << "Mod Found in mDependencies\n";
 		return;
+	}
+		
 
-	//Step 3: Determine if the mod already exists in the ModList vector. If it does put that mod into mDependencies and exit out of the function.
+	//Step 4: Determine if the mod already exists in the ModList vector. If it does put that mod into mDependencies and exit out of the function.
 	//STATUS: COMPLETE
 	result = FindMod(ModList, mNumber);
 	if (result.first)//Mod Found in ModList
 	{
+		std::cout << "Mod Found in ModList\n";
 		mDependencies.emplace_back(ModList[result.second]);
 		return;
 	}
 
-	//Step 4: If there is no such mod, create it, put the mod first into Modlist, then take the pointer to that mod in ModList and put it in mDependencies.
+	//Step 5: If there is no such mod, create it, put the mod first into Modlist, then take the pointer to that mod in ModList and put it in mDependencies.
 	//STATUS: COMPLETE
+	std::cout << "New Mod Added\n";
 	AddModToModList(mNumber);
 	mDependencies.emplace_back(ModList.back());
 }
@@ -335,7 +350,7 @@ void                 AddModToModList(int mNumber)
 	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
 	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
 	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
-	auto mDependencies = SetModDependencies();
+	auto mDependencies = SetModDependencies(mNumber);
 	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink, mDependencies };
 	ModList.emplace_back(mod);
 }

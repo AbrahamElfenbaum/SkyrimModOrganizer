@@ -9,7 +9,7 @@ TO DO:                                                                          
 Known Issues:
 -If the user presses enter and the code is expecting an integer, the cursor will go to the next line and the code will not
 continue until something is typed into the consol and enter is pressed
--There is nothing stopping a mod to be a dependency of itself
+-There is nothing stopping a mod to be a dependency of itself - DONE
 Future Plans:
 -Comment the code to make it understandable to other people reading it
 -Make test cases to make testing the code easier
