@@ -67,9 +67,9 @@ std::vector<SSEMod> SetModDependencies()
 		
 	}
 }
-bool                SetModInstalled()
+bool                SetModEnabledInstalled(const char* prompt)
 {
-	return GetValidInput<bool>("Is the mod installed? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+	return GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 }
 std::string         SetModLink(int mNumber)
 {
@@ -83,7 +83,7 @@ std::string         SetModLink(int mNumber)
 	delete[] result;
 	return url;
 }
-std::string         SetModNameAuthor(const char* prompt)
+std::string         SetModAuthorName(const char* prompt)
 {
 	ClearCIN();
 	std::string input;
@@ -274,6 +274,17 @@ const char* DisplayIsInstalled(bool mInstalled)
 		return "Is Not Installed";
 	}
 }
+const char* DisplayIsEnabled(bool mEnabled)
+{
+	if (mEnabled)
+	{
+		return "Enabled";
+	}
+	else
+	{
+		return "Disabled";
+	}
+}
 void        DisplayMod(SSEMod& mod)
 {
 
@@ -282,6 +293,7 @@ void        DisplayMod(SSEMod& mod)
 		         "Mod Author: "         << mod.mAuthor                        << '\n' <<
 		         "Mod Category: "       << DisplayCategoryName(mod.mCategory) << '\n' <<
 		         "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << '\n' <<
+				 "Mod Enable Status: "  << DisplayIsEnabled(mod.mEnabled)     << '\n' <<
 				 "Mod Link: "           << mod.mLink                          << '\n';
 	DisplayDependencies(mod.mDependencies);
 }
@@ -318,12 +330,13 @@ void                 AddModToModList(int mNumber)
 {
 	
 	auto mLink = SetModLink(mNumber);
-	auto mName = SetModNameAuthor("Enter Mod Name: ");
+	auto mName = SetModAuthorName("Enter Mod Name: ");
 	auto mCategory = SetModCategory();
-	auto mAuthor = SetModNameAuthor("Enter Mod Author: ");
-	auto mInstalled = SetModInstalled();
+	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
+	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
+	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
 	auto mDependencies = SetModDependencies();
-	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mLink, mDependencies };
+	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink, mDependencies };
 	ModList.emplace_back(mod);
 }
 void                 ClearCIN()

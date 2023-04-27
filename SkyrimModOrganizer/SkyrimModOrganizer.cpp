@@ -21,45 +21,37 @@ int main()
 	-Comment the code to make it understandable to other people reading it
 	-Make test cases to make testing the code easier
 	-Color the text so that each aspect of the mod is a bit more distinguishable
-	-Add mEnabled field to the SSEMod struct. A mod can be installed, but not enabled
+	-Add mEnabled field to the SSEMod struct. A mod can be installed, but not enabled - DONE
 	-Replace/modify adding to the ModList Vector so that the contents of the list are saved. As the code is now, the user
 	would need to re-enter in every mod they want on their list each time they start up the program
 	-Make an actual UI. This will not only make the program look better, but it may even solve some issues I'm having
 	*/
 	std::vector<SSEMod> Empty;
-	SSEMod mod1 = SSEMod{ "T1", 1,"Me", (SSECategory)1, 1, SetModLink(1), Empty };
-	SSEMod mod2 = SSEMod{ "T2", 2,"Me", (SSECategory)2, 1, SetModLink(2), Empty };
-	SSEMod mod3 = SSEMod{ "T3", 3,"Me", (SSECategory)3, 1, SetModLink(3), Empty };
+	SSEMod mod1 = SSEMod{ "T1", 1,"Me", (SSECategory)1, 1, 1,SetModLink(1), Empty };
+	SSEMod mod2 = SSEMod{ "T2", 2,"Me", (SSECategory)2, 1, 1,SetModLink(2), Empty };
+	SSEMod mod3 = SSEMod{ "T3", 3,"Me", (SSECategory)3, 1, 1,SetModLink(3), Empty };
 
 	ModList.emplace_back(mod1);
 	ModList.emplace_back(mod2);
 	ModList.emplace_back(mod3);
 	DisplayAllMods();
 	
-	//std::cout << FindMod(ModList).second << std::endl;
 	bool loop;
 	do
 	{
 		AddMod();
 		DisplayAllMods();
 		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
-	}while(loop)
+	} while (loop);
 	
 	
 #if 0
-	bool loop = true;
-	int option = -1;
-	while (loop)
+	auto mainLoop = true;
+	auto option = -1;
+	while (mainLoop)
 	{
 		DisplayChoices(UserOptions);
-		std::cout << "Enter Choice: ";
-		std::cin >> option;
-		while (!std::cin.good() || option < 1 || option > 5)
-		{
-			ClearCIN();
-			std::cout << "Invalid Entry. Enter Choice: ";
-			std::cin >> option;
-		}
+		option = GetValidInput<int>("Enter Choice: ", [](int n) { return n >= 1 && n <= 5; });
 		switch (option)
 		{
 		case 1://Add Mod

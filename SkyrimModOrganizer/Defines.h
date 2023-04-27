@@ -66,6 +66,7 @@ struct SSEMod
 	std::string         mAuthor;
 	SSECategory         mCategory;
 	bool                mInstalled;
+	bool                mEnabled;
 	std::string         mLink;
 	std::vector<SSEMod> mDependencies;
 };
@@ -102,8 +103,8 @@ void RemoveMod(int mNumber);
 #pragma region Set Functions
 SSECategory         SetModCategory();
 std::vector<SSEMod> SetModDependencies();
-bool                SetModInstalled();
-std::string         SetModNameAuthor(const char* prompt);
+bool                SetModEnabledInstalled(const char* prompt);
+std::string         SetModAuthorName(const char* prompt);
 int                 SetModNumber(const std::vector<SSEMod>& mList);
 std::string         SetModLink(int mNumber);
 #pragma endregion
