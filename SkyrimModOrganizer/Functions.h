@@ -68,6 +68,7 @@ std::vector<SSEMod> SetModDependencies(int mNumber)
 		//STATUS: COMPLETE
 		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 	}
+	return mDependencies;
 }
 bool                SetModEnabledInstalled(const char* prompt)
 {
@@ -130,11 +131,13 @@ void        DisplayAllCategories()
 			// Output the category number and name with some formatting
 			if (index + 1 < 10)
 			{
-				std::cout << std::setw(1) << std::left << (index + 1) << ")  " << std::setw(37) << std::left << categories[index];
+				FormatCategoryDisplay(index, ")  ");
+				//std::cout << std::setw(1) << std::left << (index + 1) << ")  " << std::setw(37) << std::left << categories[index];
 			}
 			else
 			{
-				std::cout << std::setw(1) << std::left << (index + 1) << ") " << std::setw(37) << std::left << categories[index];
+				FormatCategoryDisplay(index, ") ");
+				//std::cout << std::setw(1) << std::left << (index + 1) << ") " << std::setw(37) << std::left << categories[index];
 			}
 		}
 		std::cout << '\n';
@@ -265,38 +268,28 @@ void		DisplayDependencies(const std::vector<SSEMod>& mDependencies)
 	}
 	std::cout << "--------------------------------\n";
 }
-const char* DisplayIsInstalled(bool mInstalled)
+const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 {
-	if (mInstalled)
+	if (b)
 	{
-		return "Is Installed";
+		return boolT;
 	}
 	else
 	{
-		return "Is Not Installed";
-	}
-}
-const char* DisplayIsEnabled(bool mEnabled)
-{
-	if (mEnabled)
-	{
-		return "Enabled";
-	}
-	else
-	{
-		return "Disabled";
+		return boolF;
 	}
 }
 void        DisplayMod(SSEMod& mod)
 {
-
-	std::cout << "Mod Name: "           << mod.mName                          << '\n' <<
-		         "Mod Number: "         << mod.mNumber                        << '\n' <<
-		         "Mod Author: "         << mod.mAuthor                        << '\n' <<
-		         "Mod Category: "       << DisplayCategoryName(mod.mCategory) << '\n' <<
-		         "Mod Install Status: " << DisplayIsInstalled(mod.mInstalled) << '\n' <<
-				 "Mod Enable Status: "  << DisplayIsEnabled(mod.mEnabled)     << '\n' <<
-				 "Mod Link: "           << mod.mLink                          << '\n';
+	
+	
+	std::cout << "Mod Name: "           << mod.mName                                                            << '\n' <<
+		         "Mod Number: "         << mod.mNumber                                                          << '\n' <<
+		         "Mod Author: "         << mod.mAuthor                                                          << '\n' <<
+		         "Mod Category: "       << DisplayCategoryName(mod.mCategory)                                   << '\n' <<
+		         "Mod Install Status: " << DisplayBoolValue(mod.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
+		         "Mod Enable Status: "  << DisplayBoolValue(mod.mEnabled, "Enabled", "Disabled")                << '\n' <<
+				 "Mod Link: "           << mod.mLink                                                            << '\n';
 	DisplayDependencies(mod.mDependencies);
 }
 #pragma endregion
@@ -423,6 +416,10 @@ std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName
 	}
 	return std::make_pair(false, -1);//Mod Not Found
 }
+void                 FormatCategoryDisplay(int index, const char* c)
+{
+	std::cout << std::setw(1) << std::left << (index + 1) << c << std::setw(37) << std::left << categories[index];
+}
 void	             WriteToModList(SSEMod mod)
 {
 	std::ofstream outFile("ModList.txt", std::ios_base::app);
@@ -431,8 +428,8 @@ void	             WriteToModList(SSEMod mod)
 		outFile << mod.mName << '\n' <<
 			mod.mNumber << '\n' <<
 			mod.mAuthor << '\n' <<
-			DisplayCategoryName(mod.mCategory) << '\n' <<
-			DisplayIsInstalled(mod.mInstalled) << '\n' <<
+			DisplayBoolValue(mod.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
+			DisplayBoolValue(mod.mEnabled, "Enabled", "Disabled")                << '\n' <<
 			mod.mLink << '\n' <<
 			"----------Dependencies----------\n";
 		for (auto d : mod.mDependencies)

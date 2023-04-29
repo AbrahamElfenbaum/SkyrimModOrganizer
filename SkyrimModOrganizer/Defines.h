@@ -9,54 +9,18 @@
 enum SSECategory
 {
 	NoCategory,
-	Alchemy,
-	Animation,
-	Armour,
-	Armour_Shields, //Armour - Shields
-	Audio,
-	Body_Face_Hair, //Body, Face, and Hair
-	Bug_Fixes,
-	Buildings,
-	Cheats_GodItems, //Cheats and God items
-	Cities_Towns_Villages_Hamlets, //Cities, Towns, Villages, and Hamlets
-	Clothing_Accessories, //Clothing and Accessories
-	Collectables_Treasure_Hunts_Puzzles, //Collectables, Treasure Hunts, and Puzzles
-	Combat,
-	Crafting,
-	Creatures_Mounts, //Creatures and Mounts
-	Dungeons,
-	Environmental,
-	Followers_Companions, //Followers & Companions
-	Followers_Companions_Creatures, //Followers & Companions - Creatures
-	Gameplay,
-	Guilds_Factions, //Guilds/Factions
-	Immersion,
-	Items_ObjectsPlayer, //Items and Objects - Player
-	Items_ObjectsWorld, //Items and Objects - World
-	Locations_New, //Locations - New
-	Locations_Vanilla, //Locations - Vanilla
-	Magic_Gameplay, //Magic - Gameplay
-	Magic_Spells_Enchantments, //Magic - Spells & Enchantments
-	Miscellaneous,
-	Modders_Resources,
-	Models_Textures, //Models and Textures
-	NPC,
-	Overhauls,
-	Patches,
-	Player_Homes,
-	Presets_ENB_ReShade, //Presets - ENB and ReShade
-	Quests_Adventures, //Quests and Adventures
-	Races_Classes_Birthsigns, //Races, Classes, and Birthsigns
-	Save_Games,
-	Shouts,
-	Skills_Leveling,//Skills and Leveling
-	Stealth,
-	User_Interface,
-	Utilities,//Utilities
-	Visuals_Graphics,//Visuals and Graphics
-	VR,
-	Weapons,
-	Weapons_Armour//Weapons and Armour
+	Alchemy,           Animation,                     Armour,                         Armour_Shields,
+	Audio,             Body_Face_Hair,                Bug_Fixes,                      Buildings,
+	Cheats_GodItems,   Cities_Towns_Villages_Hamlets, Clothing_Accessories,           Collectables_Treasure_Hunts_Puzzles,
+	Combat,            Crafting,                      Creatures_Mounts,               Dungeons,
+	Environmental,     Followers_Companions,          Followers_Companions_Creatures, Gameplay,
+	Guilds_Factions,   Immersion,                     Items_ObjectsPlayer,            Items_ObjectsWorld,
+	Locations_New,     Locations_Vanilla,             Magic_Gameplay,                 Magic_Spells_Enchantments,
+	Miscellaneous,     Modders_Resources,             Models_Textures,                NPC,
+	Overhauls,         Patches,                       Player_Homes,                   Presets_ENB_ReShade,
+	Quests_Adventures, Races_Classes_Birthsigns,      Save_Games,                     Shouts,
+	Skills_Leveling,   Stealth,                       User_Interface,                 Utilities,
+	Visuals_Graphics,  VR,                            Weapons,                        Weapons_Armour
 };
 
 struct SSEMod
@@ -69,6 +33,7 @@ struct SSEMod
 	bool                mEnabled;
 	std::string         mLink;
 	std::vector<SSEMod> mDependencies;
+	bool				mIsDependency;
 };
 
 #pragma region Vectors
@@ -77,19 +42,18 @@ std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show
 std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Dependencies" };
 std::vector<std::string> categories =
 {
-	"Alchemy",               "Animation",                            "Armour",
-	"Armour - Shields",                          "Audio",                 "Body, Face, and Hair",                 "Bug Fixes",
-	"Buildings",                                 "Cheats and God items",  "Cities, Towns, Villages, and Hamlets", "Clothing and Accessories",
-	"Collectables, Treasure Hunts, and Puzzles", "Combat",                "Crafting",                             "Creatures and Mounts",
-	"Dungeons",                                  "Environmental",         "Followers & Companions",               "Followers & Companions - Creatures",
-	"Gameplay",                                  "Guilds/Factions",       "Immersion",                            "Items and Objects - Player",
-	"Items and Objects - World",                 "Locations - New",       "Locations - Vanilla",                  "Magic - Gameplay",
-	"Magic - Spells & Enchantments",             "Miscellaneous",         "Modders Resources",                    "Models and Textures",
-	"NPC",                                       "Overhauls",             "Patches",                              "Player Homes",
-	"Presets - ENB and ReShade",                 "Quests and Adventures", "Races, Classes, and Birthsigns",       "Save Games",
-	"Shouts",                                    "Skills and Leveling",   "Stealth",                              "User Interface",
-	"Utilities",                                 "Visuals and Graphics",  "VR",                                   "Weapons",
-	"Weapons and Armour"
+	"Alchemy",             "Animation",                          "Armour",                             "Armour - Shields",
+	"Audio",               "Body, Face, & Hair",                 "Bug Fixes",                          "Buildings",
+	"Cheats & God Items",  "Cities, Towns, Villages, & Hamlets", "Clothing & Accessories",             "Collectables, Treasure Hunts, & Puzzles",
+	"Combat",              "Crafting",                           "Creatures & Mounts",                 "Dungeons",
+	"Environmental",       "Followers & Companions",             "Followers & Companions - Creatures", "Gameplay",
+	"Guilds/Factions",     "Immersion",                          "Items & Objects - Player",           "Items & Objects - World",
+	"Locations - New",     "Locations - Vanilla",                "Magic - Gameplay",                   "Magic - Spells & Enchantments",
+	"Miscellaneous",       "Modders Resources",                  "Models & Textures",                  "NPC",
+	"Overhauls",           "Patches",                            "Player Homes",                       "Presets - ENB & ReShade",
+	"Quests & Adventures", "Races, Classes, & Birthsigns",       "Save Games",                         "Shouts",
+	"Skills & Leveling",   "Stealth",                            "User Interface",                     "Utilities",
+	"Visuals & Graphics",  "VR",                                 "Weapons",                            "Weapons & Armour"
 };
 #pragma endregion
 
@@ -114,7 +78,7 @@ void        DisplayAllCategories();
 const char* DisplayCategoryName(int category);
 void        DisplayChoices(const std::vector<const char*>& options);
 void		DisplayDependencies(const std::vector<SSEMod>& mDependencies);
-const char* DisplayIsInstalled(bool mInstalled);
+const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF);
 void        DisplayMod(SSEMod& mod);
 #pragma endregion
 
@@ -125,6 +89,7 @@ void                 ClearCIN();
 std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList);
 std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber);
 std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName);
+void                 FormatCategoryDisplay(int index, const char* c);
 void	             WriteToModList(SSEMod mod);
 #pragma endregion
 
