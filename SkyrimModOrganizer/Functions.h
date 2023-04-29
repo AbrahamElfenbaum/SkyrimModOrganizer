@@ -47,7 +47,9 @@ std::vector<SSEMod> SetModDependencies(int mNumber)
 	//Step 1: Ask the user to input whetehr or not the mod has any dependencies and ensure that what was entered is a valid input.
 	//STATUS: COMPLETE
 	std::vector<SSEMod> mDependencies;
-	auto hasDependency = GetValidInput<bool>("Does the mod have any dependencies? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+	char prompt[256];
+	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any dependencies? (1 = Yes, 0 = No): ", mNumber);
+	auto hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 
 	//Step 2: If the mod has no dependencies, exit the function
 	//STATUS: COMPLETE
@@ -58,13 +60,13 @@ std::vector<SSEMod> SetModDependencies(int mNumber)
 
 	//Step 3: If the mod does have a dependency, call the AddDependencyMod function
 	//STATUS: COMPLETE
+	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any more dependencies? (1 = Yes, 0 = No): ", mNumber);
 	while (hasDependency)
 	{
 		AddDependencyMod(mDependencies, mNumber);
 		//Step 4: Ask if there is another dependency
 		//STATUS: COMPLETE
-		hasDependency = GetValidInput<bool>("Does the mod have more dependencies? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
-		
+		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 	}
 }
 bool                SetModEnabledInstalled(const char* prompt)
