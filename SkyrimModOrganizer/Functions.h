@@ -40,18 +40,14 @@ std::vector<SSEMod*> SetModDependencies(int mNumber)
 	char prompt[256];
 	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any dependencies? (1 = Yes, 0 = No): ", mNumber);
 	auto hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
-
 	if (hasDependency == false)
 	{
 		return mDependencies;
 	}
-
 	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any more dependencies? (1 = Yes, 0 = No): ", mNumber);
 	while (hasDependency)
 	{
 		AddDependencyMod(mDependencies, mNumber);
-		//Step 4: Ask if there is another dependency
-		//STATUS: COMPLETE
 		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 	}
 	return mDependencies;
@@ -65,7 +61,7 @@ std::string          SetModLink(int mNumber)
 {
 	auto numString = std::to_string(mNumber);
 	auto path = numString.c_str();
-	auto len = 52 + strlen(path) + 1;
+	int len = 52 + strlen(path) + 1;
 	auto result = new char[len];
 	strcpy_s(result, len, "https://www.nexusmods.com/skyrimspecialedition/mods/");
 	strcat_s(result, len, path);
@@ -119,12 +115,10 @@ void        DisplayAllCategories()
 			if (index + 1 < 10)
 			{
 				FormatCategoryDisplay(index, ")  ");
-				//std::cout << std::setw(1) << std::left << (index + 1) << ")  " << std::setw(37) << std::left << categories[index];
 			}
 			else
 			{
 				FormatCategoryDisplay(index, ") ");
-				//std::cout << std::setw(1) << std::left << (index + 1) << ") " << std::setw(37) << std::left << categories[index];
 			}
 		}
 		std::cout << '\n';
@@ -435,81 +429,4 @@ void WriteToModList(SSEMod mod)
 		return;
 	}
 }
-#pragma endregion
-
-
-#pragma region To Be Replaced
-/*
-std::vector<SSEMod> OLD_SetModDependencies(int mNumber)
-{
-	//Step 1: Ask the user to input whetehr or not the mod has any dependencies and ensure that what was entered is a valid input.
-	//STATUS: COMPLETE
-	std::vector<SSEMod> mDependencies;
-	char prompt[256];
-	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any dependencies? (1 = Yes, 0 = No): ", mNumber);
-	auto hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
-
-	//Step 2: If the mod has no dependencies, exit the function
-	//STATUS: COMPLETE
-	if (hasDependency == false)
-	{
-		return mDependencies;
-	}
-
-	//Step 3: If the mod does have a dependency, call the AddDependencyMod function
-	//STATUS: COMPLETE
-	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any more dependencies? (1 = Yes, 0 = No): ", mNumber);
-	while (hasDependency)
-	{
-		OLD_AddDependencyMod(mDependencies, mNumber);
-		//Step 4: Ask if there is another dependency
-		//STATUS: COMPLETE
-		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
-	}
-	return mDependencies;
-}
-*/
-/*
-void                OLD_AddDependencyMod(std::vector<SSEMod>& mDependencies, int n)
-{
-	//Step 1: Ask the user to enter in the mod's number and ensure that what was entered is a valid input.
-	//STATUS: COMPLETE
-	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
-
-	//Step 3: Determine if the user made the mod a dependency for itself
-	//STATUS: COMPLETE
-	if (mNumber == n)//Mod is a dependency of itself
-	{
-		std::cout << "Error: Mod cannot be a dependency of itself\n";
-		return;
-	}
-
-
-	//Step 3: Determine if the mod already exists in the mDependecies vector. If it does, end the function.
-	//STATUS: COMPLETE
-	auto result = FindMod(mDependencies, mNumber);
-	if (result.first)//Mod Found in mDependencies
-	{
-		std::cout << "Mod Found in mDependencies\n";
-		return;
-	}
-
-
-	//Step 4: Determine if the mod already exists in the ModList vector. If it does put that mod into mDependencies and exit out of the function.
-	//STATUS: COMPLETE
-	result = FindMod(ModList, mNumber);
-	if (result.first)//Mod Found in ModList
-	{
-		std::cout << "Mod Found in ModList\n";
-		mDependencies.emplace_back(ModList[result.second]);
-		return;
-	}
-
-	//Step 5: If there is no such mod, create it, put the mod first into Modlist, then take the pointer to that mod in ModList and put it in mDependencies.
-	//STATUS: COMPLETE
-	std::cout << "New Mod Added\n";
-	AddModToModList(mNumber);
-	mDependencies.emplace_back(ModList.back());
-}
-*/
 #pragma endregion

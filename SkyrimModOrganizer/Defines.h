@@ -91,19 +91,11 @@ std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber);
 std::pair<bool, int> FindMod(const std::vector<SSEMod*>& mList, int mNumber);
 std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName);
 void                 FormatCategoryDisplay(int index, const char* c);
-
 #pragma endregion
 
 #pragma region Not Implemented
 void WriteToModList(SSEMod mod);
 #pragma endregion
-
-
-#pragma region To Be Replaced
-std::vector<SSEMod> OLD_SetModDependencies(int mNumber);
-void                OLD_AddDependencyMod(std::vector<SSEMod>& mDependencies, int n);
-#pragma endregion
-
 
 template<typename T>
 T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid)
