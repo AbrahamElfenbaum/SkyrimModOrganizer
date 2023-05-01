@@ -91,23 +91,6 @@ std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber);
 std::pair<bool, int> FindMod(const std::vector<SSEMod*>& mList, int mNumber);
 std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName);
 void                 FormatCategoryDisplay(int index, const char* c);
-#pragma endregion
-
-#pragma region Not Implemented
-void WriteToModList(SSEMod mod);
-#pragma endregion
-
 template<typename T>
-T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid)
-{
-	T input;
-	std::cout << prompt;
-	std::cin >> input;
-	while (!std::cin.good() || !isValid(input))
-	{
-		ClearCIN();
-		std::cout << "Invalid Entry. " << prompt;
-		std::cin >> input;
-	}
-	return input;
-}
+T                    GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);
+#pragma endregion

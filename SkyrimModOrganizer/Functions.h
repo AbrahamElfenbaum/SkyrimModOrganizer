@@ -401,32 +401,18 @@ void                 FormatCategoryDisplay(int index, const char* c)
 {
 	std::cout << std::setw(1) << std::left << (index + 1) << c << std::setw(37) << std::left << categories[index];
 }
-#pragma endregion
-
-#pragma region Not Implemented
-void WriteToModList(SSEMod mod)
+template<typename T>
+T                    GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid)
 {
-	std::ofstream outFile("ModList.txt", std::ios_base::app);
-	if (outFile.is_open())
+	T input;
+	std::cout << prompt;
+	std::cin >> input;
+	while (!std::cin.good() || !isValid(input))
 	{
-		outFile << mod.mName << '\n' <<
-			mod.mNumber << '\n' <<
-			mod.mAuthor << '\n' <<
-			DisplayBoolValue(mod.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
-			DisplayBoolValue(mod.mEnabled, "Enabled", "Disabled") << '\n' <<
-			mod.mLink << '\n' <<
-			"----------Dependencies----------\n";
-		for (auto d : mod.mDependencies)
-		{
-			outFile << d->mNumber << '\n';
-		}
-		outFile << "--------------------------------\n";
-		outFile.close();
+		ClearCIN();
+		std::cout << "Invalid Entry. " << prompt;
+		std::cin >> input;
 	}
-	else
-	{
-		std::cout << "Unable to open file!'\n'";
-		return;
-	}
+	return input;
 }
 #pragma endregion

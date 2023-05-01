@@ -1,3 +1,5 @@
 ﻿  SkyrimModOrganizer.cpp
-D:\Personal Projects\SkyrimModOrganizer\SkyrimModOrganizer\Functions.h(106,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Personal Projects\SkyrimModOrganizer\SkyrimModOrganizer\Functions.h(64,33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Personal Projects\SkyrimModOrganizer\SkyrimModOrganizer\Functions.h(102,44): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  LINK : D:\Personal Projects\SkyrimModOrganizer\x64\Debug\SkyrimModOrganizer.exe not found or not built by the last incremental link; performing full link
   SkyrimModOrganizer.vcxproj -> D:\Personal Projects\SkyrimModOrganizer\x64\Debug\SkyrimModOrganizer.exe
