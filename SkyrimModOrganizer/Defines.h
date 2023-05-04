@@ -6,7 +6,7 @@
 #include <iomanip>
 #include <functional>
 #include <map>
-
+#define MODLISTITERATOR std::map<SSEMod, std::vector<const SSEMod*>>::iterator
 enum SSECategory
 {
 	NoCategory,
@@ -89,9 +89,9 @@ void DisplayMod(SSEMod mod);
 void AddModToModList(int mNumber);
 void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n);
 void ClearCIN();
-std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod();
-std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(int mNumber);
-std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(std::string mName);
+MODLISTITERATOR FindMod();
+MODLISTITERATOR FindMod(int mNumber);
+MODLISTITERATOR FindMod(std::string mName);
 void FormatCategoryDisplay(int index, const char* c);
 template<typename T>
 T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);

@@ -280,7 +280,7 @@ void ClearCIN()
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
-std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod()
+MODLISTITERATOR FindMod()
 {
 	std::string input;
 	std::cout << "Enter the name or number of the mod you want to find: ";
@@ -302,7 +302,7 @@ std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod()
 	}
 	return ModList.end();//Mod Not Found
 }
-std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(int mNumber)
+MODLISTITERATOR FindMod(int mNumber)
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
 	{
@@ -313,7 +313,7 @@ std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(int mNumber)
 	}
 	return ModList.end();
 }
-std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(std::string mName)
+MODLISTITERATOR FindMod(std::string mName)
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
 	{
