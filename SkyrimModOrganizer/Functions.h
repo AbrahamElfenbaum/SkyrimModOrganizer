@@ -4,11 +4,7 @@
 #pragma region Main Functions
 void AddMod()
 {
-	//Step 1: Ask for a mod number. Once the input is a valid number,
-	//check to see if a mod with that number alreay exists. If it does,
-	//end the code. In not, continue inputting information
-	//STATUS: COMPLETE
-	auto mNumber = SetModNumber(ModList);
+	auto mNumber = SetModNumber();
 	if (mNumber == -1)
 	{
 		std::cout << "A Mod With This Number Already Exists\n";
@@ -18,25 +14,71 @@ void AddMod()
 }
 void DisplayAllMods()
 {
-	//Calls the DisplayMod function for each mod that exists in the ModList vector
-	for (auto& m : ModList)
+	for (auto it = ModList.begin(); it != ModList.end(); it++)
 	{
-		DisplayMod(m);
-		std::cout << '\n';
+		DisplayMod(it->first);
+		DisplayDependencies(it->second);
 	}
+}
+void EditMod(int mNumber)
+{
+
+}
+void RemoveMod(int mNumber)
+{
+
 }
 #pragma endregion
 
 #pragma region Set Functions
-SSECategory          SetModCategory()
+SSECategory SetModCategory()
 {
 	std::cout << "Here are the mod categories.\n";
 	DisplayAllCategories();
 	return static_cast<SSECategory>(GetValidInput<int>("Enter Mod Category: ", [](int n) { return n >= 0 && n <= 48; }));
 }
-std::vector<SSEMod*> SetModDependencies(int mNumber)
+bool SetModEnabledInstalled(const char* prompt)
 {
-	std::vector<SSEMod*> mDependencies;
+	return GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
+}
+std::string SetModLink(int mNumber)
+{
+	auto numString = std::to_string(mNumber);
+	auto path = numString.c_str();
+	int len = 52 + strlen(path) + 1;
+	auto result = new char[len];
+	strcpy_s(result, len, "https://www.nexusmods.com/skyrimspecialedition/mods/");
+	strcat_s(result, len, path);
+	std::string url(result);
+	delete[] result;
+	return url;
+}
+std::string SetModAuthorName(const char* prompt)
+{
+	ClearCIN();
+	std::string input;
+	std::cout << prompt;
+	getline(std::cin, input);
+	while (input.empty())
+	{
+		std::cout << "Invalid Entry. " << prompt;
+		getline(std::cin, input);
+	}
+	return input;
+}
+int SetModNumber()
+{
+	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
+	auto result = FindMod(mNumber);
+	if (result != ModList.end())//A mod that has the number mNumber has been found
+	{
+		return -1;
+	}
+	return mNumber;
+}
+std::vector<const SSEMod*> SetModDependencies(int mNumber)
+{
+	std::vector<const SSEMod*> mDependencies;
 	char prompt[256];
 	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any dependencies? (1 = Yes, 0 = No): ", mNumber);
 	auto hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
@@ -51,55 +93,15 @@ std::vector<SSEMod*> SetModDependencies(int mNumber)
 		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 	}
 	return mDependencies;
-
-}
-bool                 SetModEnabledInstalled(const char* prompt)
-{
-	return GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
-}
-std::string          SetModLink(int mNumber)
-{
-	auto numString = std::to_string(mNumber);
-	auto path = numString.c_str();
-	int len = 52 + strlen(path) + 1;
-	auto result = new char[len];
-	strcpy_s(result, len, "https://www.nexusmods.com/skyrimspecialedition/mods/");
-	strcat_s(result, len, path);
-	std::string url(result);
-	delete[] result;
-	return url;
-}
-std::string          SetModAuthorName(const char* prompt)
-{
-	ClearCIN();
-	std::string input;
-	std::cout << prompt;
-	getline(std::cin, input);
-	while (input.empty())
-	{
-		std::cout << "Invalid Entry. " << prompt;
-		getline(std::cin, input);
-	}
-	return input;
-}
-int                  SetModNumber(const std::vector<SSEMod>& mList)
-{
-	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
-	auto result = FindMod(mList, mNumber);
-	if (result.first)//A mod that has the number mNumber has been found
-	{
-		return -1;
-	}
-	return mNumber;
 }
 #pragma endregion
 
 #pragma region Display Functions
-void        DisplayAllCategories()
+void DisplayAllCategories()
 {
 	std::cout << "If the mod has no category, enter 0\n";
 	// Calculate the number of rows needed
-	int num_rows = (categories.size() + 3) / 4;
+	int num_rows = (Categories.size() + 3) / 4;
 
 	// Loop over each row
 	for (int i = 0; i < num_rows; i++) {
@@ -108,7 +110,7 @@ void        DisplayAllCategories()
 			// Calculate the index of the current category
 			int index = i * 4 + j;
 			// Check if we've gone past the end of the vector
-			if (index >= categories.size()) {
+			if (index >= Categories.size()) {
 				break;
 			}
 			// Output the category number and name with some formatting
@@ -231,7 +233,7 @@ const char* DisplayCategoryName(int category)
 		return "Default";
 	}
 }
-void        DisplayChoices(const std::vector<const char*>& options)
+void DisplayChoices(const std::vector<const char*>& options)
 {
 	auto i = 1;
 	for (auto option : options)
@@ -239,15 +241,6 @@ void        DisplayChoices(const std::vector<const char*>& options)
 		std::cout << i << ") " << options[i] << '\n';
 		i++;
 	}
-}
-void		DisplayDependencies(const std::vector<SSEMod*>& mDependencies)
-{
-	std::cout << "----------Dependencies----------\n";
-	for (const auto& d : mDependencies)
-	{
-		std::cout << d << '\n';
-	}
-	std::cout << "--------------------------------\n";
 }
 const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 {
@@ -260,69 +253,34 @@ const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 		return boolF;
 	}
 }
-void        DisplayMod(SSEMod& mod)
+void DisplayMod(SSEMod mod)
 {
-	
-	
-	std::cout << "Mod Name: "           << mod.mName                                                            << '\n' <<
-		         "Mod Number: "         << mod.mNumber                                                          << '\n' <<
-		         "Mod Author: "         << mod.mAuthor                                                          << '\n' <<
-		         "Mod Category: "       << DisplayCategoryName(mod.mCategory)                                   << '\n' <<
-		         "Mod Install Status: " << DisplayBoolValue(mod.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
-		         "Mod Enable Status: "  << DisplayBoolValue(mod.mEnabled, "Enabled", "Disabled")                << '\n' <<
-				 "Mod Link: "           << mod.mLink                                                            << '\n';
-	DisplayDependencies(mod.mDependencies);
+	std::cout << "Mod Name: " << mod.mName << '\n' <<
+		"Mod Number: " << mod.mNumber << '\n' <<
+		"Mod Author: " << mod.mAuthor << '\n' <<
+		"Mod Category: " << DisplayCategoryName(mod.mCategory) << '\n' <<
+		"Mod Install Status: " << DisplayBoolValue(mod.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
+		"Mod Enable Status: " << DisplayBoolValue(mod.mEnabled, "Enabled", "Disabled") << '\n' <<
+		"Mod Link: " << mod.mLink << '\n';
+}
+void DisplayDependencies(const std::vector<const SSEMod*>& mDependencies)
+{
+	std::cout << "----------Dependencies----------\n";
+	for (const auto& d : mDependencies)
+	{
+		std::cout << d << '\n';
+	}
+	std::cout << "--------------------------------\n";
 }
 #pragma endregion
 
 #pragma region Helper Functions
-void                 AddDependencyMod(std::vector<SSEMod*>& mDependencies, int n)
-{
-	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
-	if (mNumber == n)//Mod is a dependency of itself
-	{
-		std::cout << "Error: Mod cannot be a dependency of itself\n";
-		return;
-	}
-
-	auto result = FindMod(mDependencies, mNumber);
-	if (result.first)//Mod Found in mDependencies
-	{
-		std::cout << "Mod Found in mDependencies\n";
-		return;
-	}
-
-	result = FindMod(ModList, mNumber);
-	if (result.first)//Mod Found in ModList
-	{
-		std::cout << "Mod Found in ModList\n";
-		mDependencies.emplace_back(&ModList[result.second]);
-		return;
-	}
-
-	std::cout << "New Mod Added\n";
-	AddModToModList(mNumber);
-	mDependencies.emplace_back(&ModList.back());
-}
-void                 AddModToModList(int mNumber)
-{
-	
-	auto mLink = SetModLink(mNumber);
-	auto mName = SetModAuthorName("Enter Mod Name: ");
-	auto mCategory = SetModCategory();
-	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
-	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
-	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
-	std::vector<SSEMod*> mDependencies = SetModDependencies(mNumber);
-	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink, mDependencies };
-	ModList.emplace_back(mod);
-}
-void                 ClearCIN()
+void ClearCIN()
 {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
-std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList)
+std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod()
 {
 	std::string input;
 	std::cout << "Enter the name or number of the mod you want to find: ";
@@ -333,76 +291,45 @@ std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList)
 		getline(std::cin, input);
 	}
 	auto i = 0;
-	try {
+	try
+	{
 		auto num = std::stoi(input);
-		std::cout << "You entered an integer: " << num << '\n';
-		for (const auto& mod : mList)
-		{
-			if (mod.mNumber == num)
-			{
-				return std::make_pair(true, i);//Mod Found
-			}
-			i++;
-		}
+		return FindMod(num);
 	}
-	catch (...) {
-		std::cout << "You entered a string: " << input << '\n';
-		for (const auto& mod : mList)
-		{
-			if (mod.mName == input)
-			{
-				return std::make_pair(true, i);//Mod Found
-			}
-			i++;
-		}
-	}
-	return std::make_pair(false, -1);//Mod Not Found
-}
-std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber)
-{
-	auto i = 0;
-	for (const auto& mod : mList)
+	catch (...)
 	{
-		if (mod.mNumber == mNumber)
-		{
-			return std::make_pair(true, i);//Mod Found
-		}
-		i++;
+		return FindMod(input);
 	}
-	return std::make_pair(false, -1);//Mod Not Found
+	return ModList.end();//Mod Not Found
 }
-std::pair<bool, int> FindMod(const std::vector<SSEMod*>& mList, int mNumber)
+std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(int mNumber)
 {
-	int i = 0;
-	for (const auto& mod : mList)
+	for (auto it = ModList.begin(); it != ModList.end(); it++)
 	{
-		if (mod->mNumber == mNumber)
+		if (it->first.mNumber == mNumber)
 		{
-			return std::make_pair(true, i);//Mod Found
+			return it;
 		}
-		i++;
 	}
-	return std::make_pair(false, -1);//Mod Not Found
+	return ModList.end();
 }
-std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName)
+std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(std::string mName)
 {
-	auto i = 0;
-	for (const auto& mod : mList)
+	for (auto it = ModList.begin(); it != ModList.end(); it++)
 	{
-		if (mod.mName == mName)
+		if (it->first.mName == mName)
 		{
-			return std::make_pair(true, i);//Mod Found
+			return it;
 		}
-		i++;
 	}
-	return std::make_pair(false, -1);//Mod Not Found
+	return ModList.end();
 }
-void                 FormatCategoryDisplay(int index, const char* c)
+void FormatCategoryDisplay(int index, const char* c)
 {
-	std::cout << std::setw(1) << std::left << (index + 1) << c << std::setw(37) << std::left << categories[index];
+	std::cout << std::setw(1) << std::left << (index + 1) << c << std::setw(37) << std::left << Categories[index];
 }
 template<typename T>
-T                    GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid)
+T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid)
 {
 	T input;
 	std::cout << prompt;
@@ -414,5 +341,47 @@ T                    GetValidInput(const std::string& prompt, const std::functio
 		std::cin >> input;
 	}
 	return input;
+}
+void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n)
+{
+	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
+	if (mNumber == n)
+	{
+		std::cout << "Error: Mod cannot be a dependency of itself\n";
+		return;
+	}
+
+	for (const auto& mod : mDependencies)
+	{
+		if (mod->mNumber == mNumber)
+		{
+			std::cout << "This Mod Already Exists in the Dependencies.\n";
+			return;
+		}
+	}
+
+	auto result = FindMod(mNumber);
+	if (result != ModList.end())
+	{
+		std::cout << "Mod Found in ModList\n";
+		mDependencies.emplace_back(&(result->first));
+		return;
+	}
+
+	std::cout << "New Mod Added\n";
+	AddModToModList(mNumber);
+	mDependencies.emplace_back(&(FindMod(mNumber)->first));
+}
+void AddModToModList(int mNumber)
+{
+	auto mLink = SetModLink(mNumber);
+	auto mName = SetModAuthorName("Enter Mod Name: ");
+	auto mCategory = SetModCategory();
+	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
+	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
+	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
+	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
+	auto mDependencies = SetModDependencies(mNumber);
+	ModList.insert(std::make_pair(mod, mDependencies));
 }
 #pragma endregion

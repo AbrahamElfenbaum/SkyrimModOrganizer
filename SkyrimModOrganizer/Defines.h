@@ -5,6 +5,7 @@
 #include <string>
 #include <iomanip>
 #include <functional>
+#include <map>
 
 enum SSECategory
 {
@@ -32,15 +33,17 @@ struct SSEMod
 	bool                 mInstalled;
 	bool                 mEnabled;
 	std::string          mLink;
-	std::vector<SSEMod*> mDependencies;
-	bool				 mIsDependency;
+	
+	bool operator<(const SSEMod& other) const {
+		return mNumber < other.mNumber;
+	}
 };
+std::map<SSEMod, std::vector<const SSEMod*>> ModList;
 
 #pragma region Vectors
-std::vector<SSEMod> ModList;
 std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
 std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Dependencies" };
-std::vector<std::string> categories =
+std::vector<std::string> Categories =
 {
 	"Alchemy",             "Animation",                          "Armour",                             "Armour - Shields",
 	"Audio",               "Body, Face, & Hair",                 "Bug Fixes",                          "Buildings",
@@ -60,37 +63,36 @@ std::vector<std::string> categories =
 #pragma region Main Functions
 void AddMod();
 void DisplayAllMods();
-//void EditMod(int mNumber);
-//void RemoveMod(int mNumber);
+void EditMod(int mNumber);
+void RemoveMod(int mNumber);
 #pragma endregion
 
 #pragma region Set Functions
-SSECategory          SetModCategory();
-std::vector<SSEMod*> SetModDependencies(int mNumber);
-bool                 SetModEnabledInstalled(const char* prompt);
-std::string          SetModAuthorName(const char* prompt);
-int                  SetModNumber(const std::vector<SSEMod>& mList);
-std::string          SetModLink(int mNumber);
+SSECategory SetModCategory();
+std::vector<const SSEMod*> SetModDependencies(int mNumber);
+bool SetModEnabledInstalled(const char* prompt);
+std::string SetModAuthorName(const char* prompt);
+int SetModNumber();
+std::string SetModLink(int mNumber);
 #pragma endregion
 
 #pragma region Display Functions
-void        DisplayAllCategories();
+void DisplayAllCategories();
 const char* DisplayCategoryName(int category);
-void        DisplayChoices(const std::vector<const char*>& options);
-void		DisplayDependencies(const std::vector<SSEMod>& mDependencies);
+void DisplayChoices(const std::vector<const char*>& options);
+void DisplayDependencies(const std::vector<const SSEMod*>& mDependencies);
 const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF);
-void        DisplayMod(SSEMod& mod);
+void DisplayMod(SSEMod mod);
 #pragma endregion
 
 #pragma region Helper Functions
-void                 AddDependencyMod(std::vector<SSEMod*>& mDependencies, int n);
-void				 AddModToModList(int mNumber);
-void                 ClearCIN();
-std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList);
-std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, int mNumber);
-std::pair<bool, int> FindMod(const std::vector<SSEMod*>& mList, int mNumber);
-std::pair<bool, int> FindMod(const std::vector<SSEMod>& mList, std::string mName);
-void                 FormatCategoryDisplay(int index, const char* c);
+void AddModToModList(int mNumber);
+void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n);
+void ClearCIN();
+std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod();
+std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(int mNumber);
+std::map<SSEMod, std::vector<const SSEMod*>>::iterator FindMod(std::string mName);
+void FormatCategoryDisplay(int index, const char* c);
 template<typename T>
-T                    GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);
+T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);
 #pragma endregion

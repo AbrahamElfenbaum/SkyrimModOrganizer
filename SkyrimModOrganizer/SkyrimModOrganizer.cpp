@@ -3,25 +3,21 @@ int main()
 {
 
 #if 1
-	std::vector<SSEMod*> Empty;
-	SSEMod mod1 = SSEMod{ "T1", 1,"Me", (SSECategory)1, 1, 1,SetModLink(1), Empty };
-	SSEMod mod2 = SSEMod{ "T2", 2,"Me", (SSECategory)2, 1, 1,SetModLink(2), Empty };
-	SSEMod mod3 = SSEMod{ "T3", 3,"Me", (SSECategory)3, 1, 1,SetModLink(3), Empty };
-
-	ModList.emplace_back(mod1);
-	ModList.emplace_back(mod2);
-	ModList.emplace_back(mod3);
+	//std::vector<SSEMod*> Empty;
+	//SSEMod mod1 = SSEMod{ "T1", 1,"Me", (SSECategory)1, 1, 1,SetModLink(1)/*, Empty*/ };
+	//SSEMod mod2 = SSEMod{ "T2", 2,"Me", (SSECategory)2, 1, 1,SetModLink(2)/*, Empty*/ };
+	//SSEMod mod3 = SSEMod{ "T3", 3,"Me", (SSECategory)3, 1, 1,SetModLink(3)/*, Empty*/ };
 	DisplayAllMods();
 
 	bool loop;
 	do
 	{
-		std::cout << &ModList[0] << '\n';
-		std::cout << &ModList[1] << '\n';
-		std::cout << &ModList[2] << '\n';
 		AddMod();
 		DisplayAllMods();
-		
+		for (auto it = ModList.begin(); it != ModList.end(); it++)
+		{
+			std::cout << &(it->first) << '\n';
+		}
 		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
 	} while (loop);
 #endif // 0
