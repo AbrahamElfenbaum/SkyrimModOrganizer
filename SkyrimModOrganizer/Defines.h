@@ -80,9 +80,8 @@ std::string SetModLink(int mNumber);
 void DisplayAllCategories();
 const char* DisplayCategoryName(int category);
 void DisplayChoices(const std::vector<const char*>& options);
-void DisplayDependencies(const std::vector<const SSEMod*>& mDependencies);
 const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF);
-void DisplayMod(SSEMod mod);
+void DisplayMod(MODLISTITERATOR it);
 #pragma endregion
 
 #pragma region Helper Functions

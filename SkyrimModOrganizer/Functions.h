@@ -16,8 +16,7 @@ void DisplayAllMods()
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
 	{
-		DisplayMod(it->first);
-		DisplayDependencies(it->second);
+		DisplayMod(it);
 	}
 }
 void EditMod(int mNumber)
@@ -253,22 +252,24 @@ const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 		return boolF;
 	}
 }
-void DisplayMod(SSEMod mod)
+void DisplayMod(MODLISTITERATOR it)
 {
-	std::cout << "Mod Name: " << mod.mName << '\n' <<
-		"Mod Number: " << mod.mNumber << '\n' <<
-		"Mod Author: " << mod.mAuthor << '\n' <<
-		"Mod Category: " << DisplayCategoryName(mod.mCategory) << '\n' <<
-		"Mod Install Status: " << DisplayBoolValue(mod.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
-		"Mod Enable Status: " << DisplayBoolValue(mod.mEnabled, "Enabled", "Disabled") << '\n' <<
-		"Mod Link: " << mod.mLink << '\n';
-}
-void DisplayDependencies(const std::vector<const SSEMod*>& mDependencies)
-{
+		
+	std::cout << "Mod Name: "           << it->first.mName                                                            << '\n' <<
+				 "Mod Number: "         << it->first.mNumber                                                          << '\n' <<
+				 "Mod Author: "         << it->first.mAuthor                                                          << '\n' <<
+				 "Mod Category: "       << DisplayCategoryName(it->first.mCategory)                                   << '\n' <<
+				 "Mod Install Status: " << DisplayBoolValue(it->first.mInstalled, "Is Installed", "Is Not Installed") << '\n' <<
+				 "Mod Enable Status: "  << DisplayBoolValue(it->first.mEnabled, "Enabled", "Disabled")                << '\n' <<
+				 "Mod Link: "           << it->first.mLink                                                            << '\n' << 
+		         "Mod Address: "        << &(it->first) << '\n';
 	std::cout << "----------Dependencies----------\n";
-	for (const auto& d : mDependencies)
+	for (const auto& d : it->second)
 	{
-		std::cout << d << '\n';
+		
+		std::cout << d->mNumber << ": "     << d->mName << '\n' << 
+			         "Dependency Address: " << d        << '\n';
+
 	}
 	std::cout << "--------------------------------\n";
 }
@@ -374,13 +375,13 @@ void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n)
 }
 void AddModToModList(int mNumber)
 {
-	auto mLink = SetModLink(mNumber);
-	auto mName = SetModAuthorName("Enter Mod Name: ");
-	auto mCategory = SetModCategory();
-	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
-	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
-	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
-	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
+	auto mLink         = SetModLink(mNumber);
+	auto mName         = SetModAuthorName("Enter Mod Name: ");
+	auto mCategory     = SetModCategory();
+	auto mAuthor       = SetModAuthorName("Enter Mod Author: ");
+	auto mInstalled    = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
+	auto mEnabled      = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
+	auto mod           = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
 	auto mDependencies = SetModDependencies(mNumber);
 	ModList.insert(std::make_pair(mod, mDependencies));
 }
