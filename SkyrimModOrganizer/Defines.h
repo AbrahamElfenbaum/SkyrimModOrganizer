@@ -42,7 +42,7 @@ std::map<SSEMod, std::vector<const SSEMod*>> ModList;
 
 #pragma region Vectors
 std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
-std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Dependencies" };
+std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Enable Status", "Dependencies" };
 std::vector<std::string> Categories =
 {
 	"Alchemy",             "Animation",                          "Armour",                             "Armour - Shields",
@@ -63,8 +63,8 @@ std::vector<std::string> Categories =
 #pragma region Main Functions
 void AddMod();
 void DisplayAllMods();
-void EditMod(int mNumber);
-void RemoveMod(int mNumber);
+void EditMod();
+void RemoveMod();
 #pragma endregion
 
 #pragma region Set Functions
@@ -88,10 +88,15 @@ void DisplayMod(MODLISTITERATOR it);
 void AddModToModList(int mNumber);
 void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n);
 void ClearCIN();
+bool FindDependency(int mNumber);
 MODLISTITERATOR FindMod();
 MODLISTITERATOR FindMod(int mNumber);
 MODLISTITERATOR FindMod(std::string mName);
 void FormatCategoryDisplay(int index, const char* c);
 template<typename T>
 T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);
+#pragma endregion
+
+#pragma region Test Functions
+void TEST_AddModsToModList();
 #pragma endregion

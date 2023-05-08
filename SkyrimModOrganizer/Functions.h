@@ -19,13 +19,67 @@ void DisplayAllMods()
 		DisplayMod(it);
 	}
 }
-void EditMod(int mNumber)
+void EditMod()
 {
+	auto modIter = FindMod();
+	if (modIter == ModList.end())
+	{
+		std::cout << "No Such Mod Exists\n";
+		//return;
+	}
 
+	std::cout << "Mod Found\n";
+	DisplayChoices(ModProperties);
+	int mNumber;
+	auto option = GetValidInput<int>("Enter Choice: ", [](int n) { return n >= 1 && n <= 7; });
+	switch (option)
+	{
+	case 1:
+		//Edit Name
+		const_cast<SSEMod&>(modIter->first).mName = SetModAuthorName("Enter Mod Name: ");
+		break;
+	case 2:
+		//Edit Number
+		mNumber = SetModNumber();
+		if (mNumber == -1)
+		{
+			std::cout << "A Mod With This Number Already Exists\n";
+			return;
+		}
+		const_cast<SSEMod&>(modIter->first).mNumber = mNumber;
+		break;
+	case 3:
+		//Edit Author
+		const_cast<SSEMod&>(modIter->first).mName = SetModAuthorName("Enter Mod Author: ");
+		break;
+	case 4:
+		//Edit Category
+		const_cast<SSEMod&>(modIter->first).mCategory = SetModCategory();
+		break;
+	case 5:
+		//Edit Install Status
+		const_cast<SSEMod&>(modIter->first).mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
+		break;
+	case 6:
+		//Edit Enable Status
+		const_cast<SSEMod&>(modIter->first).mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
+		break;
+	case 7:
+		//Edit Dependencies
+		break;
+	default:
+		break;
+	}
 }
-void RemoveMod(int mNumber)
+void RemoveMod()
 {
-
+	auto modIter = FindMod();
+	if (modIter == ModList.end())
+	{
+		std::cout << "No Such Mod Exists\n";
+		return;
+	}
+	std::cout << "Mod Found\n";
 }
 #pragma endregion
 
@@ -234,10 +288,10 @@ const char* DisplayCategoryName(int category)
 }
 void DisplayChoices(const std::vector<const char*>& options)
 {
-	auto i = 1;
+	auto i = 0;
 	for (auto option : options)
 	{
-		std::cout << i << ") " << options[i] << '\n';
+		std::cout << i + 1 << ") " << options[i] << '\n';
 		i++;
 	}
 }
@@ -280,6 +334,20 @@ void ClearCIN()
 {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+bool FindDependency(int mNumber)
+{
+	for (auto it = ModList.begin(); it != ModList.end(); it++)
+	{
+		for (const auto& mod : it->second)
+		{
+			if (mod->mNumber == mNumber)
+			{
+				return true;//mod mNumber is a dependency
+			}
+		}
+	}
+	return false;//mod mNumber is not a dependency
 }
 MODLISTITERATOR FindMod()
 {
@@ -384,5 +452,18 @@ void AddModToModList(int mNumber)
 	auto mod           = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
 	auto mDependencies = SetModDependencies(mNumber);
 	ModList.insert(std::make_pair(mod, mDependencies));
+}
+#pragma endregion
+
+#pragma region Test Functions
+void TEST_AddModsToModList()
+{
+	bool loop;
+	do
+	{
+		AddMod();
+		DisplayAllMods();
+		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+	} while (loop);
 }
 #pragma endregion

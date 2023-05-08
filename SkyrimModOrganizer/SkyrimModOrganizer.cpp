@@ -1,18 +1,9 @@
 #include "Functions.h"
 int main()
 {
-
-#if 1
-
-	bool loop;
-	do
-	{
-		AddMod();
-		DisplayAllMods();
-		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
-	} while (loop);
-#endif // 0
-	
+	TEST_AddModsToModList();
+	EditMod();
+	DisplayAllMods();
 #if 0
 	auto mainLoop = true;
 	auto option = -1;
