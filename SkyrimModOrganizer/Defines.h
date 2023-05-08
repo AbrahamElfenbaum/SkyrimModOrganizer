@@ -43,6 +43,7 @@ std::map<SSEMod, std::vector<const SSEMod*>> ModList;
 #pragma region Vectors
 std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
 std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Enable Status", "Dependencies" };
+std::vector<const char*> AddRemoveDependency{ "Add Dependecny", "Remove Dependency" };
 std::vector<std::string> Categories =
 {
 	"Alchemy",             "Animation",                          "Armour",                             "Armour - Shields",
@@ -88,6 +89,7 @@ void DisplayMod(MODLISTITERATOR it);
 void AddModToModList(int mNumber);
 void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n);
 void ClearCIN();
+void EditDependencies(MODLISTITERATOR it);
 bool FindDependency(int mNumber);
 MODLISTITERATOR FindMod();
 MODLISTITERATOR FindMod(int mNumber);

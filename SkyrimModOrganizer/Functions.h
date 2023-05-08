@@ -66,6 +66,7 @@ void EditMod()
 		break;
 	case 7:
 		//Edit Dependencies
+		EditDependencies(modIter);
 		break;
 	default:
 		break;
@@ -330,10 +331,67 @@ void DisplayMod(MODLISTITERATOR it)
 #pragma endregion
 
 #pragma region Helper Functions
+void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n)
+{
+	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
+	if (mNumber == n)
+	{
+		std::cout << "Error: Mod cannot be a dependency of itself\n";
+		return;
+	}
+
+	for (const auto& mod : mDependencies)
+	{
+		if (mod->mNumber == mNumber)
+		{
+			std::cout << "This Mod Already Exists in the Dependencies.\n";
+			return;
+		}
+	}
+
+	auto result = FindMod(mNumber);
+	if (result != ModList.end())
+	{
+		std::cout << "Mod Found in ModList\n";
+		mDependencies.emplace_back(&(result->first));
+		return;
+	}
+
+	std::cout << "New Mod Added\n";
+	AddModToModList(mNumber);
+	mDependencies.emplace_back(&(FindMod(mNumber)->first));
+}
+void AddModToModList(int mNumber)
+{
+	auto mLink = SetModLink(mNumber);
+	auto mName = SetModAuthorName("Enter Mod Name: ");
+	auto mCategory = SetModCategory();
+	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
+	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
+	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
+	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
+	auto mDependencies = SetModDependencies(mNumber);
+	ModList.insert(std::make_pair(mod, mDependencies));
+}
 void ClearCIN()
 {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
+void EditDependencies(MODLISTITERATOR it)
+{
+	DisplayChoices(AddRemoveDependency);
+	auto option = GetValidInput<int>("Enter Choice: ", [](int n) { return n == 1 || n == 2; });
+	switch (option)
+	{
+	case 1:
+		AddDependencyMod(it->second, it->first.mNumber);
+		break;
+	case 2:
+		break;
+	default:
+		break;
+	}
 }
 bool FindDependency(int mNumber)
 {
@@ -410,48 +468,6 @@ T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid
 		std::cin >> input;
 	}
 	return input;
-}
-void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n)
-{
-	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
-	if (mNumber == n)
-	{
-		std::cout << "Error: Mod cannot be a dependency of itself\n";
-		return;
-	}
-
-	for (const auto& mod : mDependencies)
-	{
-		if (mod->mNumber == mNumber)
-		{
-			std::cout << "This Mod Already Exists in the Dependencies.\n";
-			return;
-		}
-	}
-
-	auto result = FindMod(mNumber);
-	if (result != ModList.end())
-	{
-		std::cout << "Mod Found in ModList\n";
-		mDependencies.emplace_back(&(result->first));
-		return;
-	}
-
-	std::cout << "New Mod Added\n";
-	AddModToModList(mNumber);
-	mDependencies.emplace_back(&(FindMod(mNumber)->first));
-}
-void AddModToModList(int mNumber)
-{
-	auto mLink         = SetModLink(mNumber);
-	auto mName         = SetModAuthorName("Enter Mod Name: ");
-	auto mCategory     = SetModCategory();
-	auto mAuthor       = SetModAuthorName("Enter Mod Author: ");
-	auto mInstalled    = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
-	auto mEnabled      = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
-	auto mod           = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
-	auto mDependencies = SetModDependencies(mNumber);
-	ModList.insert(std::make_pair(mod, mDependencies));
 }
 #pragma endregion
 
