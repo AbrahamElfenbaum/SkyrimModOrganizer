@@ -1,10 +1,15 @@
 #include "Functions.h"
+#define TEST 1
+#define MAIN 0
 int main()
 {
+#if TEST
 	TEST_AddModsToModList();
 	RemoveMod();
 	DisplayAllMods();
-#if 0
+#endif // TEST
+
+#if MAIN
 	auto mainLoop = true;
 	auto option = -1;
 	while (mainLoop)
@@ -13,16 +18,20 @@ int main()
 		option = GetValidInput<int>("Enter Choice: ", [](int n) { return n >= 1 && n <= 5; });
 		switch (option)
 		{
-		case 1://Add Mod
+		case 1:
 			AddMod();
 			break;
-		case 2://Edit Mod
+		case 2:
+			EditMod();
 			break;
-		case 3://Remove Mod
+		case 3:
+			RemoveMod();
 			break;
-		case 4://Display Mods
+		case 4:
+			DisplayAllMods();
 			break;
-		case 5://Exit
+		case 5:
+			mainLoop = false;
 			break;
 		default:
 			break;

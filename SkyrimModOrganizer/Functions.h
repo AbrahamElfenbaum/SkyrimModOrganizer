@@ -56,6 +56,7 @@ void EditMod()
 		//Edit Category
 		const_cast<SSEMod&>(modIter->first).mCategory = SetModCategory();
 		break;
+	
 	case 5:
 		//Edit Install Status
 		const_cast<SSEMod&>(modIter->first).mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
@@ -101,10 +102,12 @@ SSECategory SetModCategory()
 	DisplayAllCategories();
 	return static_cast<SSECategory>(GetValidInput<int>("Enter Mod Category: ", [](int n) { return n >= 0 && n <= 48; }));
 }
+
 bool SetModEnabledInstalled(const char* prompt)
 {
 	return GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
 }
+
 std::string SetModLink(int mNumber)
 {
 	auto numString = std::to_string(mNumber);
@@ -379,7 +382,7 @@ void AddModToModList(int mNumber)
 	auto mAuthor = SetModAuthorName("Enter Mod Author: ");
 	auto mInstalled = SetModEnabledInstalled("Is the mod installed? (1 = Yes, 0 = No): ");
 	auto mEnabled = SetModEnabledInstalled("Is the mod enabled? (1 = Yes, 0 = No): ");
-	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
+	auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink};
 	auto mDependencies = SetModDependencies(mNumber);
 	ModList.insert(std::make_pair(mod, mDependencies));
 }

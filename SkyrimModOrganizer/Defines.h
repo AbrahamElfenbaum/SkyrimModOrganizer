@@ -42,7 +42,7 @@ std::map<SSEMod, std::vector<const SSEMod*>> ModList;
 
 #pragma region Vectors
 std::vector<const char*> UserOptions{ "Add Mod", "Edit Mod", "Remove Mod", "Show Mods", "Exit" };
-std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Enable Status", "Dependencies" };
+std::vector<const char*> ModProperties{ "Name", "Number", "Author", "Category", "Install Status", "Enable Status", "Dependencies"};
 std::vector<const char*> AddRemoveDependency{ "Add Dependecny", "Remove Dependency" };
 std::vector<std::string> Categories =
 {
