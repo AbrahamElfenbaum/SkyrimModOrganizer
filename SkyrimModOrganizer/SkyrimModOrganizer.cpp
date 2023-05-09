@@ -2,7 +2,7 @@
 int main()
 {
 	TEST_AddModsToModList();
-	EditMod();
+	RemoveMod();
 	DisplayAllMods();
 #if 0
 	auto mainLoop = true;

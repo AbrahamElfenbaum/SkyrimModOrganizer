@@ -21,14 +21,14 @@ void DisplayAllMods()
 }
 void EditMod()
 {
-	auto modIter = FindMod();
+	auto modIter = FindMod("Enter the name or number of the mod you want to edit: ");
 	if (modIter == ModList.end())
 	{
 		std::cout << "No Such Mod Exists\n";
-		//return;
+		return;
 	}
 
-	std::cout << "Mod Found\n";
+	DisplayMod(modIter);
 	DisplayChoices(ModProperties);
 	int mNumber;
 	auto option = GetValidInput<int>("Enter Choice: ", [](int n) { return n >= 1 && n <= 7; });
@@ -74,13 +74,23 @@ void EditMod()
 }
 void RemoveMod()
 {
-	auto modIter = FindMod();
+	auto modIter = FindMod("Enter the name or number of the mod you want to remove: ");
 	if (modIter == ModList.end())
 	{
 		std::cout << "No Such Mod Exists\n";
 		return;
 	}
-	std::cout << "Mod Found\n";
+	DisplayMod(modIter);
+	auto confirm = GetValidInput<bool>("Are you sure you want to delete this mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+	if (confirm)
+	{
+		if (FindDependency(modIter->first.mNumber))
+		{
+			std::cout << "This mod cannot be removed. It is a dependency for another mod.\n";
+			return;
+		}
+		ModList.erase(modIter);
+	}
 }
 #pragma endregion
 
@@ -309,7 +319,6 @@ const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 }
 void DisplayMod(MODLISTITERATOR it)
 {
-		
 	std::cout << "Mod Name: "           << it->first.mName                                                            << '\n' <<
 				 "Mod Number: "         << it->first.mNumber                                                          << '\n' <<
 				 "Mod Author: "         << it->first.mAuthor                                                          << '\n' <<
@@ -319,6 +328,7 @@ void DisplayMod(MODLISTITERATOR it)
 				 "Mod Link: "           << it->first.mLink                                                            << '\n' << 
 		         "Mod Address: "        << &(it->first) << '\n';
 	std::cout << "----------Dependencies----------\n";
+	
 	for (const auto& d : it->second)
 	{
 		
@@ -380,14 +390,25 @@ void ClearCIN()
 }
 void EditDependencies(MODLISTITERATOR it)
 {
+	int mNumber;
 	DisplayChoices(AddRemoveDependency);
 	auto option = GetValidInput<int>("Enter Choice: ", [](int n) { return n == 1 || n == 2; });
+	int i = 0;
 	switch (option)
 	{
 	case 1:
 		AddDependencyMod(it->second, it->first.mNumber);
 		break;
 	case 2:
+		mNumber = GetValidInput<int>("Enter the number of the mode you wish to remove: ", [](int n) { return n >= 0; });
+		for (const auto& d : it->second)
+		{
+			if (d->mNumber == mNumber)
+			{
+				it->second.erase(it->second.begin() + i);
+			}
+			i++;
+		}
 		break;
 	default:
 		break;
@@ -407,17 +428,16 @@ bool FindDependency(int mNumber)
 	}
 	return false;//mod mNumber is not a dependency
 }
-MODLISTITERATOR FindMod()
+MODLISTITERATOR FindMod(const char* prompt)
 {
 	std::string input;
-	std::cout << "Enter the name or number of the mod you want to find: ";
+	std::cout << prompt;
 	getline(std::cin, input);
 	while (input.empty())
 	{
-		std::cout << "Invalid Entry. Enter the name or number of the mod you want to find: ";
+		std::cout << "Invalid Entry. " << prompt;
 		getline(std::cin, input);
 	}
-	auto i = 0;
 	try
 	{
 		auto num = std::stoi(input);

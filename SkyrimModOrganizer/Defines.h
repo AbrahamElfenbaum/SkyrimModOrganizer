@@ -91,7 +91,7 @@ void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n);
 void ClearCIN();
 void EditDependencies(MODLISTITERATOR it);
 bool FindDependency(int mNumber);
-MODLISTITERATOR FindMod();
+MODLISTITERATOR FindMod(const char* prompt);
 MODLISTITERATOR FindMod(int mNumber);
 MODLISTITERATOR FindMod(std::string mName);
 void FormatCategoryDisplay(int index, const char* c);
