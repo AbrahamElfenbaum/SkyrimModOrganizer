@@ -12,6 +12,7 @@ void AddMod()
 	}
 	AddModToModList(mNumber);
 }
+
 void DisplayAllMods()
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
@@ -19,6 +20,7 @@ void DisplayAllMods()
 		DisplayMod(it);
 	}
 }
+
 void EditMod()
 {
 	auto modIter = FindMod("Enter the name or number of the mod you want to edit: ");
@@ -73,6 +75,7 @@ void EditMod()
 		break;
 	}
 }
+
 void RemoveMod()
 {
 	auto modIter = FindMod("Enter the name or number of the mod you want to remove: ");
@@ -96,11 +99,44 @@ void RemoveMod()
 #pragma endregion
 
 #pragma region Set Functions
+std::string SetModAuthorName(const char* prompt)
+{
+	ClearCIN();
+	std::string input;
+	std::cout << prompt;
+	getline(std::cin, input);
+	while (input.empty())
+	{
+		std::cout << "Invalid Entry. " << prompt;
+		getline(std::cin, input);
+	}
+	return input;
+}
+
 SSECategory SetModCategory()
 {
 	std::cout << "Here are the mod categories.\n";
 	DisplayAllCategories();
 	return static_cast<SSECategory>(GetValidInput<int>("Enter Mod Category: ", [](int n) { return n >= 0 && n <= 48; }));
+}
+
+std::vector<const SSEMod*> SetModDependencies(int mNumber)
+{
+	std::vector<const SSEMod*> mDependencies;
+	char prompt[256];
+	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any dependencies? (1 = Yes, 0 = No): ", mNumber);
+	auto hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
+	if (hasDependency == false)
+	{
+		return mDependencies;
+	}
+	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any more dependencies? (1 = Yes, 0 = No): ", mNumber);
+	while (hasDependency)
+	{
+		AddDependencyMod(mDependencies, mNumber);
+		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
+	}
+	return mDependencies;
 }
 
 bool SetModEnabledInstalled(const char* prompt)
@@ -120,19 +156,7 @@ std::string SetModLink(int mNumber)
 	delete[] result;
 	return url;
 }
-std::string SetModAuthorName(const char* prompt)
-{
-	ClearCIN();
-	std::string input;
-	std::cout << prompt;
-	getline(std::cin, input);
-	while (input.empty())
-	{
-		std::cout << "Invalid Entry. " << prompt;
-		getline(std::cin, input);
-	}
-	return input;
-}
+
 int SetModNumber()
 {
 	auto mNumber = GetValidInput<int>("Enter Mod Number: ", [](int n) { return n >= 0; });
@@ -143,27 +167,10 @@ int SetModNumber()
 	}
 	return mNumber;
 }
-std::vector<const SSEMod*> SetModDependencies(int mNumber)
-{
-	std::vector<const SSEMod*> mDependencies;
-	char prompt[256];
-	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any dependencies? (1 = Yes, 0 = No): ", mNumber);
-	auto hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
-	if (hasDependency == false)
-	{
-		return mDependencies;
-	}
-	sprintf_s(prompt, sizeof(prompt), "Does Mod %d have any more dependencies? (1 = Yes, 0 = No): ", mNumber);
-	while (hasDependency)
-	{
-		AddDependencyMod(mDependencies, mNumber);
-		hasDependency = GetValidInput<bool>(prompt, [](bool b) {return b == 0 || b == 1; });
-	}
-	return mDependencies;
-}
 #pragma endregion
 
 #pragma region Display Functions
+
 void DisplayAllCategories()
 {
 	std::cout << "If the mod has no category, enter 0\n";
@@ -193,6 +200,7 @@ void DisplayAllCategories()
 		std::cout << '\n';
 	}
 }
+
 const char* DisplayCategoryName(int category)
 {
 	switch (category)
@@ -300,6 +308,7 @@ const char* DisplayCategoryName(int category)
 		return "Default";
 	}
 }
+
 void DisplayChoices(const std::vector<const char*>& options)
 {
 	auto i = 0;
@@ -309,6 +318,7 @@ void DisplayChoices(const std::vector<const char*>& options)
 		i++;
 	}
 }
+
 const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 {
 	if (b)
@@ -320,6 +330,7 @@ const char* DisplayBoolValue(bool b, const char* boolT, const char* boolF)
 		return boolF;
 	}
 }
+
 void DisplayMod(MODLISTITERATOR it)
 {
 	std::cout << "Mod Name: "           << it->first.mName                                                            << '\n' <<
@@ -374,6 +385,7 @@ void AddDependencyMod(std::vector<const SSEMod*>& mDependencies, int n)
 	AddModToModList(mNumber);
 	mDependencies.emplace_back(&(FindMod(mNumber)->first));
 }
+
 void AddModToModList(int mNumber)
 {
 	auto mLink = SetModLink(mNumber);
@@ -386,11 +398,13 @@ void AddModToModList(int mNumber)
 	auto mDependencies = SetModDependencies(mNumber);
 	ModList.insert(std::make_pair(mod, mDependencies));
 }
+
 void ClearCIN()
 {
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
+
 void EditDependencies(MODLISTITERATOR it)
 {
 	int mNumber;
@@ -417,6 +431,7 @@ void EditDependencies(MODLISTITERATOR it)
 		break;
 	}
 }
+
 bool FindDependency(int mNumber)
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
@@ -431,6 +446,7 @@ bool FindDependency(int mNumber)
 	}
 	return false;//mod mNumber is not a dependency
 }
+
 MODLISTITERATOR FindMod(const char* prompt)
 {
 	std::string input;
@@ -452,6 +468,7 @@ MODLISTITERATOR FindMod(const char* prompt)
 	}
 	return ModList.end();//Mod Not Found
 }
+
 MODLISTITERATOR FindMod(int mNumber)
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
@@ -463,6 +480,7 @@ MODLISTITERATOR FindMod(int mNumber)
 	}
 	return ModList.end();
 }
+
 MODLISTITERATOR FindMod(std::string mName)
 {
 	for (auto it = ModList.begin(); it != ModList.end(); it++)
@@ -474,10 +492,12 @@ MODLISTITERATOR FindMod(std::string mName)
 	}
 	return ModList.end();
 }
+
 void FormatCategoryDisplay(int index, const char* c)
 {
 	std::cout << std::setw(1) << std::left << (index + 1) << c << std::setw(37) << std::left << Categories[index];
 }
+
 template<typename T>
 T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid)
 {

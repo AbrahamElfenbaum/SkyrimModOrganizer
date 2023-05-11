@@ -9,10 +9,12 @@ Known Issues:
 -If the user presses enter and the code is expecting an integer, the cursor will go to the next line and the code will not
 continue until something is typed into the consol and enter is pressed
 -There is nothing stopping a mod to be a dependency of itself - DONE
+-There are a few programs that some mods need that are not mods themselves. The first example that comes to mind is SKSE.
+I need to figure out what to do for these cases.
 Future Plans:
 -Add bool mIsDependency field to the SSEMod struct. It will be false by default. And if it becomes a dependnecy to a mod,
 it will be set to true. This will be a check to see if a mod can be freely edited and/or deleted when those functions are
-created
+created. NOTE: THIS HAS BEEN DONE, BUT NOT AS ORIGINALLY INTENDED.
 -Comment the code to make it understandable to other people reading it
 -Make test cases to make testing the code easier
 -Color the text so that each aspect of the mod is a bit more distinguishable
