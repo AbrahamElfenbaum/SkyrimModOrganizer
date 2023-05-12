@@ -514,18 +514,72 @@ T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid
 }
 #pragma endregion
 
-#pragma region Test Functions
-void TEST_AddModsToModList()
+#pragma region Save and Load Functions
+void LoadModListFromFile()
 {
-	bool loop;
-	do
+	std::ifstream inFile("ModList.txt");
+	std::string line;
+	std::string token;
+	std::string mName, mNumberStr, mAuthor, mCategoryStr, mInstalledStr, mEnabledStr, mLink, mDependenciesStr;
+	int mNumber;
+	bool mInstalled, mEnabled;
+	SSECategory mCategory;
+	std::vector<std::pair<int, std::vector<int>>> modDependencyPairs;
+	//read each line of the file
+	while (std::getline(inFile, line))
 	{
-		AddMod();
-		DisplayAllMods();
-		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
-	} while (loop);
+		std::istringstream ss(line);
+		//parse the current line into the mod fields
+		std::getline(ss, mName, ',');
+		std::getline(ss, mNumberStr, ',');
+		std::getline(ss, mAuthor, ',');
+		std::getline(ss, mCategoryStr, ',');
+		std::getline(ss, mInstalledStr, ',');
+		std::getline(ss, mEnabledStr, ',');
+		std::getline(ss, mLink, ',');
+
+		//convert mNumberStr, mCategoryStr, mInstalledStr and mEnabledStr into their proper variable types
+		mNumber = std::stoi(mNumberStr);
+		mCategory = static_cast<SSECategory>(std::stoi(mCategoryStr));
+		mInstalled = (mInstalledStr == "1");
+		mEnabled = (mEnabledStr == "1");
+		auto mod = SSEMod{ mName, mNumber, mAuthor, mCategory, mInstalled, mEnabled, mLink };
+		std::vector<const SSEMod*> mDependencies;
+		ModList.insert(std::make_pair(mod, mDependencies));
+
+		//get the dependencies string 
+		std::getline(ss, mDependenciesStr, '\n');
+		//if the dependencies string is not blank
+		if (mDependenciesStr != "")
+		{
+			//remove the quotation marks from the begining and end of the string
+			mDependenciesStr.erase(std::remove(mDependenciesStr.begin(), mDependenciesStr.end(), '\"'), mDependenciesStr.end());
+
+			//parse the mDependenciesStr into integers so that the dependencies can be 
+			//added to the proper dependency vector in ModList
+			std::string dToken;
+			std::istringstream dStream(mDependenciesStr);
+			std::vector<int> dNumbers;
+			while (std::getline(dStream, dToken, ';'))
+			{
+				dNumbers.push_back(std::stoi(dToken));
+			}
+			modDependencyPairs.push_back(std::make_pair(mNumber, dNumbers));
+			mDependenciesStr = "";
+		}
+	}
+
+	//add the dependencies to the appropriate mod
+	for (const auto& pair : modDependencyPairs)
+	{
+		auto it = FindMod(pair.first);
+		for (auto dep : pair.second)
+		{
+			it->second.emplace_back(&FindMod(dep)->first);
+		}
+	}
+	inFile.close();
 }
-#pragma endregion
 
 void SaveModListToFile()
 {
@@ -539,12 +593,12 @@ void SaveModListToFile()
 
 		// Write SSEMod fields
 		outFile << mInfo.mName << ","
-			    << mInfo.mNumber << ","
-			    << mInfo.mAuthor << ","
-			    << mInfo.mCategory << ","
-			    << mInfo.mInstalled << ","
-			    << mInfo.mEnabled << ","
-			    << mInfo.mLink;
+			<< mInfo.mNumber << ","
+			<< mInfo.mAuthor << ","
+			<< mInfo.mCategory << ","
+			<< mInfo.mInstalled << ","
+			<< mInfo.mEnabled << ","
+			<< mInfo.mLink;
 
 		// Write dependencies (if any)
 		if (!mDependencies.empty())
@@ -559,34 +613,20 @@ void SaveModListToFile()
 			outFile << "\"";
 		}
 		outFile << "\n";
-
 	}
 	outFile.close();
 }
+#pragma endregion
 
-void LoadModListFromFile()
+#pragma region Test Functions
+void TEST_AddModsToModList()
 {
-	std::ifstream inFile("ModList.txt");
-	std::string line;
-	std::vector<std::string> tokens;
-	std::string token;
-	
-	//read each line of the file
-	while (std::getline(inFile, line))
+	bool loop;
+	do
 	{
-		std::istringstream ss(line);
-		//parse the current line by commas into individual strings
-		while (std::getline(ss, token, ','))
-		{
-			tokens.push_back(token);
-			//tokens[0] = mName: string
-			//tokens[1] = mNumber: int
-			//tokens[2] = mAuthor:string
-			//tokens[3] = mCatagory: SSECategory
-			//tokens[4] = mInstalled: bool
-			//tokens[5] = mEnabled: bool
-			//tokens[6] = mLink: string
-			//tokens[7] = mDependencies: vector<const SSEMod*>
-		}
-	}
+		AddMod();
+		DisplayAllMods();
+		loop = GetValidInput<bool>("Add Another Mod? (1 = Yes, 0 = No): ", [](bool b) {return b == 0 || b == 1; });
+	} while (loop);
 }
+#pragma endregion

@@ -254,9 +254,18 @@ template<typename T>
 T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);
 #pragma endregion
 
+#pragma region Save and Load Functions
+/// <summary>
+/// Loads the mod list from a file named "ModList.txt".
+/// </summary>
+void LoadModListFromFile();
+
+/// <summary>
+/// Saves the mod list from ModList data structure to a file named "ModList.txt". 
+/// </summary>
+void SaveModListToFile();
+#pragma endregion
+
 #pragma region Test Functions
 void TEST_AddModsToModList();
 #pragma endregion
-
-void SaveModListToFile();
-void LoadModListFromFile();

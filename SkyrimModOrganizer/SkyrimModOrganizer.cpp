@@ -6,7 +6,7 @@ int main()
 #if TEST
 	LoadModListFromFile();
 	//LoadFromModListFile();
-	//DisplayAllMods();
+	DisplayAllMods();
 	//TEST_AddModsToModList();
 	//RemoveMod();
 	//DisplayAllMods();
