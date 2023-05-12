@@ -581,6 +581,12 @@ void LoadModListFromFile()
 	inFile.close();
 }
 
+//TO DO:
+//1. Make sure that no mod is saved twice. Ex Mod "N" was created and saved. In ModList.txt, there should only ever be
+//one line of data for Mod "N"
+//2. If a mod was deleted, delete that information from ModList.txt
+//3. Modify existing information. If a mod has a dependency added or removed from it, then that should be reflected in
+// the file.
 void SaveModListToFile()
 {
 	std::ofstream outFile("ModList.txt");

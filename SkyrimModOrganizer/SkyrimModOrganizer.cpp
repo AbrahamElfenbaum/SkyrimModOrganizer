@@ -10,7 +10,7 @@ int main()
 	//TEST_AddModsToModList();
 	//RemoveMod();
 	//DisplayAllMods();
-	//SaveToModListFile();
+	//SaveModListToFile();
 #endif // TEST
 
 #if MAIN

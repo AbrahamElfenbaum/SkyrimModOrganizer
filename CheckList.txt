@@ -20,5 +20,5 @@ created. NOTE: THIS HAS BEEN DONE, BUT NOT AS ORIGINALLY INTENDED.
 -Color the text so that each aspect of the mod is a bit more distinguishable
 -Add bool mEnabled field to the SSEMod struct. A mod can be installed, but not enabled - DONE
 -Replace/modify adding to the ModList Vector so that the contents of the list are saved. As the code is now, the user
-would need to re-enter in every mod they want on their list each time they start up the program
+would need to re-enter in every mod they want on their list each time they start up the program - IN PROGRESS
 -Make an actual UI. This will not only make the program look better, but it may even solve some issues I'm having
