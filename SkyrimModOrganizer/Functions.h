@@ -526,3 +526,67 @@ void TEST_AddModsToModList()
 	} while (loop);
 }
 #pragma endregion
+
+void SaveModListToFile()
+{
+	std::ofstream outFile("ModList.txt");
+
+	// Write each SSEMod object and its associated vector to a line in the file
+	for (auto& mod : ModList)
+	{
+		const SSEMod& mInfo = mod.first;
+		const std::vector<const SSEMod*>& mDependencies = mod.second;
+
+		// Write SSEMod fields
+		outFile << mInfo.mName << ","
+			    << mInfo.mNumber << ","
+			    << mInfo.mAuthor << ","
+			    << mInfo.mCategory << ","
+			    << mInfo.mInstalled << ","
+			    << mInfo.mEnabled << ","
+			    << mInfo.mLink;
+
+		// Write dependencies (if any)
+		if (!mDependencies.empty())
+		{
+			outFile << ",\"";
+			for (size_t i = 0; i < mDependencies.size(); i++)
+			{
+				outFile << mDependencies[i]->mNumber;
+				if (i < mDependencies.size() - 1)
+					outFile << ";";
+			}
+			outFile << "\"";
+		}
+		outFile << "\n";
+
+	}
+	outFile.close();
+}
+
+void LoadModListFromFile()
+{
+	std::ifstream inFile("ModList.txt");
+	std::string line;
+	std::vector<std::string> tokens;
+	std::string token;
+	
+	//read each line of the file
+	while (std::getline(inFile, line))
+	{
+		std::istringstream ss(line);
+		//parse the current line by commas into individual strings
+		while (std::getline(ss, token, ','))
+		{
+			tokens.push_back(token);
+			//tokens[0] = mName: string
+			//tokens[1] = mNumber: int
+			//tokens[2] = mAuthor:string
+			//tokens[3] = mCatagory: SSECategory
+			//tokens[4] = mInstalled: bool
+			//tokens[5] = mEnabled: bool
+			//tokens[6] = mLink: string
+			//tokens[7] = mDependencies: vector<const SSEMod*>
+		}
+	}
+}

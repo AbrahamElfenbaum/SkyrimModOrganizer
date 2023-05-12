@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <iomanip>
@@ -240,7 +241,6 @@ MODLISTITERATOR FindMod(std::string mName);
 /// <param name="c">The character string to use after the category number</param>
 void FormatCategoryDisplay(int index, const char* c);
 
-
 /// <summary>
 /// Template function to get valid input of type T from the user, using a prompt and a
 /// validation function.
@@ -257,3 +257,6 @@ T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid
 #pragma region Test Functions
 void TEST_AddModsToModList();
 #pragma endregion
+
+void SaveModListToFile();
+void LoadModListFromFile();

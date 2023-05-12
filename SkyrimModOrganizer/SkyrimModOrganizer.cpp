@@ -4,9 +4,13 @@
 int main()
 {
 #if TEST
-	TEST_AddModsToModList();
-	RemoveMod();
-	DisplayAllMods();
+	LoadModListFromFile();
+	//LoadFromModListFile();
+	//DisplayAllMods();
+	//TEST_AddModsToModList();
+	//RemoveMod();
+	//DisplayAllMods();
+	//SaveToModListFile();
 #endif // TEST
 
 #if MAIN

@@ -1,16 +1,8 @@
-Test
-1996
-Me
-Stealth
-Is Not Installed
-https://www.nexusmods.com/skyrimspecialedition/mods/1996
-----------Dependencies----------
---------------------------------
-Test2
-2022
-Me
-Stealth
-Is Not Installed
-https://www.nexusmods.com/skyrimspecialedition/mods/1996
-----------Dependencies----------
---------------------------------
+T1,1,Me,1,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/1,"2;3;4"
+T2,2,Me,2,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/2
+T3,3,Me,3,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/3
+T4,4,Me,4,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/4,"3"
+T5,5,Me,5,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/5,"6"
+T6,6,Me,6,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/6,"7;8"
+T7,7,Me,7,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/7
+T8,8,Me,8,1,1,https://www.nexusmods.com/skyrimspecialedition/mods/8
