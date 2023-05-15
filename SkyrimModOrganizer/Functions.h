@@ -587,8 +587,13 @@ void LoadModListFromFile()
 //2. If a mod was deleted, delete that information from ModList.txt
 //3. Modify existing information. If a mod has a dependency added or removed from it, then that should be reflected in
 // the file.
+
 void SaveModListToFile()
 {
+	//Clears the file of the old infomation. THIS IS TEMPORARY!
+	std::ofstream clear("ModList.txt", std::ios::out | std::ios::trunc);
+	clear.close();
+
 	std::ofstream outFile("ModList.txt");
 
 	// Write each SSEMod object and its associated vector to a line in the file
@@ -599,12 +604,12 @@ void SaveModListToFile()
 
 		// Write SSEMod fields
 		outFile << mInfo.mName << ","
-			<< mInfo.mNumber << ","
-			<< mInfo.mAuthor << ","
-			<< mInfo.mCategory << ","
-			<< mInfo.mInstalled << ","
-			<< mInfo.mEnabled << ","
-			<< mInfo.mLink;
+				<< mInfo.mNumber << ","
+				<< mInfo.mAuthor << ","
+				<< mInfo.mCategory << ","
+				<< mInfo.mInstalled << ","
+				<< mInfo.mEnabled << ","
+				<< mInfo.mLink;
 
 		// Write dependencies (if any)
 		if (!mDependencies.empty())
@@ -636,3 +641,29 @@ void TEST_AddModsToModList()
 	} while (loop);
 }
 #pragma endregion
+
+bool ModExistsInFile(const SSEMod& mod)
+{
+	std::ifstream inFile("ModList.txt");
+	std::string line;
+
+	while (std::getline(inFile, line))
+	{
+		std::istringstream ss(line);
+		std::string mName, mNumberStr;
+		int mNumber;
+		std::getline(ss, mName, ',');
+		std::getline(ss, mNumberStr, ',');
+		mNumber = std::stoi(mNumberStr);
+
+		// Check if mod exists in the file
+		if (mName == mod.mName || mNumber == mod.mNumber)
+		{
+			inFile.close();
+			return true;
+		}
+	}
+
+	inFile.close();
+	return false;
+}

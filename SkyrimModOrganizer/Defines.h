@@ -252,6 +252,8 @@ void FormatCategoryDisplay(int index, const char* c);
 /// <returns>The valid input of type T entered by the user</returns>
 template<typename T>
 T GetValidInput(const std::string& prompt, const std::function<bool(T)>& isValid);
+
+bool ModExistsInFile(const SSEMod& mod);
 #pragma endregion
 
 #pragma region Save and Load Functions

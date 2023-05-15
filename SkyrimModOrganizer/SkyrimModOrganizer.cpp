@@ -8,9 +8,10 @@ int main()
 	//LoadFromModListFile();
 	DisplayAllMods();
 	//TEST_AddModsToModList();
-	//RemoveMod();
+	//EditMod();
+	RemoveMod();
 	//DisplayAllMods();
-	//SaveModListToFile();
+	SaveModListToFile();
 #endif // TEST
 
 #if MAIN
